@@ -44,7 +44,8 @@ fun RootApp() {
             }
         }
     ) {
-        MainListView(items = viewModel.items)
+        MainListView(items = viewModel.items) { id, isChecked
+            -> viewModel.markItemDone(id) }
     }
 
 

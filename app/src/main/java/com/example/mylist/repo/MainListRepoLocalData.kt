@@ -5,11 +5,11 @@ import com.example.mylist.models.ListItemData
 class MainListRepoLocalData : MainListDAO {
     override fun getMainList(): List<ListItemData> {
         return listOf(
-            ListItemData("See a movie"),
-            ListItemData("Send letter to Santa"),
-            ListItemData("Schedule dentist"),
-            ListItemData("Watch TV"),
-            ListItemData("Go to the gym"),
+            ListItemData(name = "See a movie"),
+            ListItemData(name = "Send letter to Santa"),
+            ListItemData(name = "Schedule dentist"),
+            ListItemData(name = "Watch TV"),
+            ListItemData(name = "Go to the gym"),
         )
     }
 }
