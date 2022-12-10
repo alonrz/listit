@@ -14,12 +14,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.mylist.models.ListItemData
+import com.example.mylist.navigation.ScreenNavigation
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainListView(items: List<ListItemData>, onItemChecked: (Int, Boolean) -> Unit) {
+fun MainListView(
+    items: List<ListItemData>,
+    navController: NavController,
+    onCheckedClick: (Int, Boolean) -> Unit,
+) {
     LazyColumn() {
         stickyHeader {
             Text(
@@ -38,10 +46,24 @@ fun MainListView(items: List<ListItemData>, onItemChecked: (Int, Boolean) -> Uni
                 id = item.id,
                 isChecked = isChecked,
                 onCheckedClick = { b ->
-                    onItemChecked(item.id, b)
+                    onCheckedClick(item.id, b)
                     isChecked = b
                 },
+                onItemClick = {
+                    navController.navigate(route = ScreenNavigation.Edit.route)
+                }
             )
         }
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun MainListViewPreview() {
+    MainListView(items = listOf(
+        ListItemData(name = "a", id = 1),
+        ListItemData(name = "b", id = 2),
+        ListItemData(name = "c", id = 3),
+    ),
+        navController = rememberNavController(), onCheckedClick = { _, _ -> })
 }

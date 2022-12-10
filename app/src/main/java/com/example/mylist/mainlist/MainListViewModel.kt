@@ -19,7 +19,7 @@ class MainListViewModel constructor(private val mainListRepo: MainListRepo) : Vi
         item?.let { _list.remove(it) }
     }
 
-    fun markItemDone(id: Int) {
+    fun changeItemCheckStatus(id: Int, checked: Boolean) {
         val item = _list.find { it.id == id }
         val index = _list.indexOf(item)
         item?.let {
@@ -28,7 +28,7 @@ class MainListViewModel constructor(private val mainListRepo: MainListRepo) : Vi
                 ListItemData(
                     name = it.name,
                     id = it.id,
-                    isChecked = true,
+                    isChecked = checked,
                 )
             )
         }

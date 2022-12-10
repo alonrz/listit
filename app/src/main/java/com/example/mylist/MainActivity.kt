@@ -3,28 +3,29 @@ package com.example.mylist
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.mylist.mainlist.MainListViewModel
+import com.example.mylist.navigation.setupNavGraph
 import com.example.mylist.repo.MainListRepo
 import com.example.mylist.repo.MainListRepoLocalData
 import com.example.mylist.ui.theme.MylistTheme
-import com.example.mylist.views.MainListView
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var navController: NavHostController
+//    private val mainListViewModel: MainListViewModel =
+//        ViewModelProvider(owner = this,
+//            factory = MainListViewModel.factory)[MainListViewModel::class.java]
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MylistTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    RootApp()
-                }
+                navController = rememberNavController()
+                setupNavGraph(navController = navController)
             }
         }
     }
