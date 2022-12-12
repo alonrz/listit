@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,6 +29,8 @@ fun ListItemView(
             checked = isChecked,
             onCheckedChange = onCheckedClick,
         )
-        Text(text = title)
+        Text(
+            text = title,
+        )
     }
 }

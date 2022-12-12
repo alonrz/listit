@@ -39,7 +39,7 @@ fun MainListView(
                     .fillMaxWidth()
             )
         }
-        items(items) { item ->
+        items(items, key = { it.id }) { item ->
             var isChecked by rememberSaveable { mutableStateOf(item.isChecked) }
             ListItemView(
                 title = "${item.name} (${item.id})",

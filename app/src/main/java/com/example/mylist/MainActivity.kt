@@ -30,32 +30,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RootApp() {
-    val viewModel = MainListViewModel(MainListRepo(MainListRepoLocalData()))
-    Scaffold(
-        floatingActionButtonPosition = FabPosition.End,
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                viewModel.addItem()
-            }) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "")
-            }
-        }
-    ) {
-        MainListView(items = viewModel.items) { id, isChecked
-            -> viewModel.markItemDone(id) }
-    }
-
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MylistTheme {
-        RootApp()
-    }
-}

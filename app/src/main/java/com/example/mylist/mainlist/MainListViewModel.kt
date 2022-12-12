@@ -1,12 +1,23 @@
-package com.example.mylist
+package com.example.mylist.mainlist
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.mylist.models.ListItemData
 import com.example.mylist.repo.MainListRepo
+import com.example.mylist.repo.MainListRepoLocalData
 import kotlin.random.Random
 
-class MainListViewModel constructor(private val mainListRepo: MainListRepo) : ViewModel() {
+@Suppress("UNCHECKED_CAST")
+class MainListViewModel(
+    private val mainListRepo: MainListRepo,
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel() {
+
     private val _list = mutableStateListOf<ListItemData>()
     val items: List<ListItemData> = _list
 
@@ -48,6 +59,22 @@ class MainListViewModel constructor(private val mainListRepo: MainListRepo) : Vi
             8 -> "Meditate"
             9 -> "Go for a run"
             else -> "Take a break"
+        }
+    }
+
+    companion object   {
+        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(
+                modelClass: Class<T>,
+                extras: CreationExtras,
+            ): T {
+                val savedStateHandle = extras.createSavedStateHandle()
+                Log.d("ALON", "view model is initiated")
+                return MainListViewModel(
+                    mainListRepo = MainListRepo(MainListRepoLocalData()),
+                    savedStateHandle = savedStateHandle,
+                ) as T
+            }
         }
     }
 }
