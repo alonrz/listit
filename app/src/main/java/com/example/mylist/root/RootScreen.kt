@@ -1,20 +1,33 @@
 package com.example.mylist.root
 
+import android.app.Application
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mylist.mainlist.MainListViewModel
+import com.example.mylist.mainlist.MainListViewModelFactory
 import com.example.mylist.views.MainListView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootScreen(
+    application: Application,
     navController: NavController,
+    lifecycle: Lifecycle,
 ) {
-    val viewModel: MainListViewModel = viewModel(factory = MainListViewModel.Factory)
+    val viewModel: MainListViewModel =
+        viewModel(
+            factory = MainListViewModelFactory(
+                application = application,
+                lifecycle = lifecycle,
+            )
+        )
     Scaffold(
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
@@ -24,8 +37,12 @@ fun RootScreen(
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "")
             }
         }
-    ) {
-        MainListView(items = viewModel.items, navController = navController) { id, checked ->
+    ) { paddingValues ->
+        MainListView(
+            modifier = Modifier.padding(paddingValues),
+            viewModel = viewModel,
+            navController = navController,
+        ) { id, checked ->
             viewModel.changeItemCheckStatus(
                 id,
                 checked = checked,

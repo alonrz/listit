@@ -3,14 +3,10 @@ package com.example.mylist
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModelProvider
+import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.mylist.mainlist.MainListViewModel
 import com.example.mylist.navigation.setupNavGraph
-import com.example.mylist.repo.MainListRepo
-import com.example.mylist.repo.MainListRepoLocalData
 import com.example.mylist.ui.theme.MylistTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,10 +18,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             MylistTheme {
                 navController = rememberNavController()
-                setupNavGraph(navController = navController)
+                setupNavGraph(
+                    application = application,
+                    navController = navController,
+                    lifecycle = lifecycle,
+                )
             }
         }
     }

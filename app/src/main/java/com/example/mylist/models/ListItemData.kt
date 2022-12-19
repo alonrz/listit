@@ -1,11 +1,15 @@
 package com.example.mylist.models
 
-import android.view.View
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.util.*
 
+@Entity(tableName = "main_list")
 data class ListItemData(
-    val name: String,
-    val isChecked: Boolean = false,
-    val id: Int = View.generateViewId(),
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    @ColumnInfo val title: String,
+    @ColumnInfo val isDone: Boolean = false,
 ) {
 
 }
