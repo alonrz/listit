@@ -1,0 +1,35 @@
+package com.example.mylist.edit
+
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.coroutineScope
+import com.example.mylist.data.GenericRepo
+import com.example.mylist.models.ListItemData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+class EditViewModel(
+    val itemId: String,
+    var itemTitle: MutableState<String> = mutableStateOf(""),
+    private val repo: GenericRepo,
+    private val lifecycle: Lifecycle,
+) : ViewModel() {
+
+    private lateinit var item: ListItemData
+
+    init {
+        lifecycle.coroutineScope.launch(Dispatchers.IO) {
+            item = repo.findById(id = itemId)
+            itemTitle.value = item.title
+        }
+    }
+
+    // Move this to a save button
+    fun changeItemTitle(title: String) {
+        lifecycle.coroutineScope.launch(Dispatchers.IO) {
+            repo.updateTitle(item.id ?: itemId, title = title)
+        }
+    }
+}

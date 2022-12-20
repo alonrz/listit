@@ -31,7 +31,7 @@ class MainListRepoFakeData(
         return _list
     }
 
-    override fun findById(id: Int): ListItemData {
+    override suspend fun findById(id: String): ListItemData {
         TODO("Not yet implemented")
     }
 
@@ -47,6 +47,11 @@ class MainListRepoFakeData(
     override fun deleteById(itemId: String) {
         TODO("Not yet implemented")
     }
+
+    override suspend fun updateTitle(id: String, title: String) {
+        TODO("Not yet implemented")
+    }
+
 
     companion object {
         fun getFakeNewTitle(): String {

@@ -8,11 +8,13 @@ interface GenericRepo {
 
     fun observeAll(): LiveData<List<ListItemData>>
 
-    fun findById(id: Int): ListItemData
+    suspend fun findById(id: String): ListItemData
 
     suspend fun insert(item: ListItemData)
 
     fun delete(listItemData: ListItemData)
 
     fun deleteById(itemId: String)
+
+    suspend fun updateTitle(id: String, title:String)
 }

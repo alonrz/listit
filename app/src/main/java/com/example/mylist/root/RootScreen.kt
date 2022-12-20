@@ -1,12 +1,14 @@
 package com.example.mylist.root
 
 import android.app.Application
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -36,6 +38,14 @@ fun RootScreen(
             }) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "")
             }
+        },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "top text")
+                },
+                 modifier = Modifier.background(Color.Cyan)
+            )
         }
     ) { paddingValues ->
         MainListView(

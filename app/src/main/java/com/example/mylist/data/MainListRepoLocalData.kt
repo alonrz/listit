@@ -15,7 +15,7 @@ class MainListRepoLocalData(private val mainListDAO: MainListDao) : GenericRepo 
         return mainListDAO.observeAll()
     }
 
-    override fun findById(id: Int): ListItemData {
+    override suspend fun findById(id: String): ListItemData {
         return mainListDAO.findById(id)
     }
 
@@ -29,5 +29,9 @@ class MainListRepoLocalData(private val mainListDAO: MainListDao) : GenericRepo 
 
     override fun deleteById(itemId: String) {
         mainListDAO.deleteById(itemId)
+    }
+
+    override suspend fun updateTitle(id: String, title: String) {
+        mainListDAO.updateTitle(id, title)
     }
 }

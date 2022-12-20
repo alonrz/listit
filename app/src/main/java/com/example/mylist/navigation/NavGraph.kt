@@ -4,9 +4,12 @@ import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.mylist.edit.EditScreen
+import com.example.mylist.edit.EditViewModel
 import com.example.mylist.root.RootScreen
 
 @Composable
@@ -30,9 +33,18 @@ fun setupNavGraph(
             )
         }
         composable(
-            route = ScreenNavigation.Edit.route
+            route = ScreenNavigation.Edit.route,
+            arguments = listOf(
+                navArgument(name = EDIT_ARGUMENT_KEY) { type = NavType.StringType },
+                navArgument(name = EDIT_ARGUMENT_KEY2) { type = NavType.StringType },
+            )
         ) {
-            EditScreen(navController = navController)//navigation pass id, name, etc
+            EditScreen(
+                navController = navController,
+                itemId = it.arguments?.getString(EDIT_ARGUMENT_KEY) ?: "",
+                itemTitle = it.arguments?.getString(EDIT_ARGUMENT_KEY2) ?: "",
+                lifecycle = lifecycle,
+            )
         }
     }
 }

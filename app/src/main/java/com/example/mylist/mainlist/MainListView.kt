@@ -42,13 +42,19 @@ fun MainListView(
                     .fillMaxWidth()
             )
         }
-        items(items = listItems) {
-            item: ListItemData ->
+        items(items = listItems) { item: ListItemData ->
             ListItemView(
                 title = item.title,
                 id = item.id,
-                onCheckedClick = { } ,
-                onItemClick = { /*TODO*/ })
+                onCheckedClick = { },
+                onItemClick = {
+                    navController.navigate(
+                        route = ScreenNavigation.Edit.passIdAndTitle(
+                            id = item.id,
+                            title = item.title,
+                        )
+                    )
+                })
         }
 //        items(items = listItems) { item ->
 //
