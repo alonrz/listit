@@ -42,7 +42,7 @@ fun RootScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "top text")
+                    Text(text = "Remember Board")
                 },
                  modifier = Modifier.background(Color.Cyan)
             )

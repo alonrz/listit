@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mylist.navigation.ScreenNavigation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,8 +36,9 @@ fun EditScreen(
             lifecycle = lifecycle,
         )
     )
-    var textFieldValue = viewModel.itemTitle
+    val textFieldValue = viewModel.itemTitle
     val focusRequester = remember { FocusRequester() }
+    var openDeleteDialog by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -62,7 +64,9 @@ fun EditScreen(
             fontWeight = FontWeight.Bold,
         )
         Button(
-            onClick = { viewModel.deleteItem() },
+            onClick = {
+                openDeleteDialog = true
+            },
         ) {
             Icon(
                 imageVector = Icons.Filled.Delete,
@@ -73,6 +77,29 @@ fun EditScreen(
             Text(text = "Delete")
         }
 
+        if (openDeleteDialog) {
+            AlertDialog(onDismissRequest = { openDeleteDialog = false },
+                title = {
+                    Text(text = "Delete Item")
+                },
+                text = {
+                    Text(text = "Are you sure you want to delete this item?")
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        viewModel.deleteItem()
+                        navController.navigate(route = ScreenNavigation.Root.route)
+                    }) {
+                        Text("Delete")
+                    }
+
+                },
+                dismissButton = {
+                    Button(onClick = { openDeleteDialog = false }) {
+                        Text("Cancel")
+                    }
+                })
+        }
         LaunchedEffect(key1 = Unit, block = { focusRequester.requestFocus() })
     }
 }
