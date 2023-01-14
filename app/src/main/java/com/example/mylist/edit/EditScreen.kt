@@ -3,6 +3,8 @@ package com.example.mylist.edit
 import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -59,6 +61,17 @@ fun EditScreen(
             fontSize = MaterialTheme.typography.displayLarge.fontSize,
             fontWeight = FontWeight.Bold,
         )
+        Button(
+            onClick = { viewModel.deleteItem() },
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = "Delete item",
+                modifier = Modifier.size(ButtonDefaults.IconSize)
+            )
+            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+            Text(text = "Delete")
+        }
 
         LaunchedEffect(key1 = Unit, block = { focusRequester.requestFocus() })
     }

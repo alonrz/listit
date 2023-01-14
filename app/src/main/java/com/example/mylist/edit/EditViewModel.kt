@@ -32,4 +32,10 @@ class EditViewModel(
             repo.updateTitle(item.id ?: itemId, title = title)
         }
     }
+
+    fun deleteItem() {
+//        lifecycle.coroutineScope.launch(Dispatchers.IO) {
+//            repo.deleteById(item.id)
+//        }
+    }
 }
