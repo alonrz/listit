@@ -44,7 +44,7 @@ fun RootScreen(
                 title = {
                     Text(text = "Remember Board")
                 },
-                 modifier = Modifier.background(Color.Cyan)
+                modifier = Modifier.background(Color.Cyan)
             )
         }
     ) { paddingValues ->
@@ -52,12 +52,7 @@ fun RootScreen(
             modifier = Modifier.padding(paddingValues),
             viewModel = viewModel,
             navController = navController,
-        ) { id, checked ->
-            viewModel.changeItemCheckStatus(
-                id,
-                checked = checked,
-            )
-        }
+        )
     }
 }
 

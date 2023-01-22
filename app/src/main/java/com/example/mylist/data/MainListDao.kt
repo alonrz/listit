@@ -29,4 +29,7 @@ interface MainListDao {
 
     @Query("UPDATE main_list SET title = :title WHERE id == :id")
     fun updateTitle(id: String, title: String)
+
+    @Query("UPDATE main_list SET isDone = :isDone WHERE id == :id")
+    fun updateStatus(id: String, isDone: Boolean)
 }

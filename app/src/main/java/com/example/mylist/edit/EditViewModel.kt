@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 class EditViewModel(
     val itemId: String,
     var itemTitle: MutableState<String> = mutableStateOf(""),
+    val isDone: MutableState<Boolean> = mutableStateOf(false),
     private val repo: GenericRepo,
     private val lifecycle: Lifecycle,
 ) : ViewModel() {

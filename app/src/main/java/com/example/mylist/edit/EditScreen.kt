@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -25,6 +26,7 @@ fun EditScreen(
     modifier: Modifier = Modifier.background(Color.Blue),
     itemId: String,
     itemTitle: String,
+    isDone: Boolean,
     navController: NavController,
     lifecycle: Lifecycle,
 ) {
@@ -32,6 +34,7 @@ fun EditScreen(
         factory = EditViewModelFactory(
             itemId = itemId,
             itemTitle = itemTitle,
+            isDone = isDone,
             application = Application(),
             lifecycle = lifecycle,
         )
@@ -60,6 +63,7 @@ fun EditScreen(
         Text(
             text = viewModel.itemTitle.value,
             color = Color.Cyan,
+            lineHeight = 50.sp,
             fontSize = MaterialTheme.typography.displayLarge.fontSize,
             fontWeight = FontWeight.Bold,
         )
@@ -76,6 +80,9 @@ fun EditScreen(
             Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
             Text(text = "Delete")
         }
+
+        Text(text = "is done?")
+        Text(text = if (viewModel.isDone.value) "Done" else "Not Done")
 
         if (openDeleteDialog) {
             AlertDialog(onDismissRequest = { openDeleteDialog = false },

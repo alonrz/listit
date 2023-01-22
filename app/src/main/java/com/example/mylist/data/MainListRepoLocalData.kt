@@ -34,4 +34,8 @@ class MainListRepoLocalData(private val mainListDAO: MainListDao) : GenericRepo 
     override suspend fun updateTitle(id: String, title: String) {
         mainListDAO.updateTitle(id, title)
     }
+
+    override suspend fun updateStatus(id: String, isDone: Boolean) {
+        mainListDAO.updateStatus(id, isDone)
+    }
 }

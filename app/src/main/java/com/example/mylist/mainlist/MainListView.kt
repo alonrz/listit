@@ -9,15 +9,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.mylist.mainlist.MainListViewModel
 import com.example.mylist.models.ListItemData
 import com.example.mylist.navigation.ScreenNavigation
@@ -28,7 +24,6 @@ fun MainListView(
     viewModel: MainListViewModel,
     navController: NavController,
     modifier: Modifier = Modifier,
-    onCheckedClick: (Int, Boolean) -> Unit,
 ) {
     val listItems by viewModel.observeItems.observeAsState(initial = emptyList())
     LazyColumn(modifier = modifier) {
@@ -46,32 +41,18 @@ fun MainListView(
             ListItemView(
                 title = item.title,
                 id = item.id,
-                onCheckedClick = { },
+                isChecked = item.isDone,
+                onCheckedClick = { viewModel.changeItemCheckStatus(item.id, !item.isDone) },
                 onItemClick = {
                     navController.navigate(
                         route = ScreenNavigation.Edit.passIdAndTitle(
                             id = item.id,
                             title = item.title,
+                            isDone = item.isDone,
                         )
                     )
                 })
         }
-//        items(items = listItems) { item ->
-//
-//            var isChecked by rememberSaveable { mutableStateOf(item.isDone) }
-//            ListItemView(
-//                title = "${item.title} (${item.id})",
-//                id = item.id,
-//                isChecked = isChecked,
-//                onCheckedClick = { b ->
-//                    onCheckedClick(item.id, b)
-//                    isChecked = b
-//                },
-//                onItemClick = {
-//                    navController.navigate(route = ScreenNavigation.Edit.route)
-//                }
-//            )
-//        }
     }
 }
 
