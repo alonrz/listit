@@ -50,7 +50,7 @@ fun EditScreen(
         TextField(
             value = textFieldValue.value,
             onValueChange = {
-                kotlin.synchronized(this) {
+                synchronized(this) {
                     textFieldValue.value = it
                     viewModel.changeItemTitle(it)
                 }

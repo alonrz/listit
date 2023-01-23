@@ -26,7 +26,7 @@ class MainListViewModel(
     fun addItem(item: ListItemData? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             repo.insert(
-                ListItemData(
+                item ?: ListItemData(
                     title = MainListRepoFakeData.getFakeNewTitle(),
                     isDone = false,
                 )

@@ -2,11 +2,10 @@ package com.example.mylist.views
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -26,32 +25,36 @@ fun MainListView(
     modifier: Modifier = Modifier,
 ) {
     val listItems by viewModel.observeItems.observeAsState(initial = emptyList())
-    LazyColumn(modifier = modifier) {
-        stickyHeader {
-            Text(
-                text = "Main List",
-                color = Color.White,
-                modifier = Modifier
-                    .background(Color.Gray)
-                    .padding(4.dp)
-                    .fillMaxWidth()
-            )
-        }
-        items(items = listItems) { item: ListItemData ->
-            ListItemView(
-                title = item.title,
-                id = item.id,
-                isChecked = item.isDone,
-                onCheckedClick = { viewModel.changeItemCheckStatus(item.id, !item.isDone) },
-                onItemClick = {
-                    navController.navigate(
-                        route = ScreenNavigation.Edit.passIdAndTitle(
-                            id = item.id,
-                            title = item.title,
-                            isDone = item.isDone,
+//    var promptAddNewItemUi by remember { mutableStateOf(promptAddNewItemUi2) }
+    Column {
+        LazyColumn(modifier = modifier.weight(1f)) {
+            stickyHeader {
+                Text(
+                    text = "Main List",
+                    color = Color.White,
+                    modifier = Modifier
+                        .background(Color.Gray)
+                        .padding(4.dp)
+                        .fillMaxWidth()
+                )
+            }
+
+            items(items = listItems) { item: ListItemData ->
+                ListItemView(
+                    title = item.title,
+                    id = item.id,
+                    isChecked = item.isDone,
+                    onCheckedClick = { viewModel.changeItemCheckStatus(item.id, !item.isDone) },
+                    onItemClick = {
+                        navController.navigate(
+                            route = ScreenNavigation.Edit.passIdAndTitle(
+                                id = item.id,
+                                title = item.title,
+                                isDone = item.isDone,
+                            )
                         )
-                    )
-                })
+                    })
+            }
         }
     }
 }
