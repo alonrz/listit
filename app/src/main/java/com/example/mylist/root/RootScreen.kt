@@ -1,6 +1,9 @@
 package com.example.mylist.root
 
 import android.app.Application
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -38,6 +41,10 @@ fun RootScreen(
 
                 )
         )
+    BackPressedHandler(
+        onBackPressed = { promptAddNewItemUi = false },
+        isEnabled = promptAddNewItemUi
+    )
     Scaffold(
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
@@ -109,6 +116,34 @@ fun AddNewItemUi(viewModel: MainListViewModel, finishedAddingItem: () -> Unit) {
                     )
                 }
             })
+    }
+}
+
+@Composable
+fun BackPressedHandler(
+    backPressedDispatcher: OnBackPressedDispatcher? = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher,
+    isEnabled: Boolean,
+    onBackPressed: () -> Unit,
+) {
+    val currentOnBackPressed by rememberUpdatedState(newValue = onBackPressed)
+
+    val backCallBack = remember {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                currentOnBackPressed()
+            }
+        }
+    }
+
+    SideEffect {
+        backCallBack.isEnabled = isEnabled
+    }
+    DisposableEffect(key1 = backPressedDispatcher) {
+        backPressedDispatcher?.addCallback(backCallBack)
+
+        onDispose {
+            backCallBack.remove()
+        }
     }
 }
 //@Composable
