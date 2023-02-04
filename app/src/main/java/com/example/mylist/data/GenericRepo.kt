@@ -17,4 +17,6 @@ interface GenericRepo {
     fun deleteById(itemId: String)
 
     suspend fun updateTitle(id: String, title:String)
+
+    suspend fun updateStatus(id: String, isDone: Boolean)
 }

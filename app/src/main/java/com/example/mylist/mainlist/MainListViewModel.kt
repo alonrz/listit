@@ -17,19 +17,16 @@ class MainListViewModel(
     private val _forceUpdate = MutableLiveData<Boolean>(false)
     private val _dataLoading = MutableLiveData<Boolean>(false)
     val observeItems: LiveData<List<ListItemData>>
-//    private lateinit var mainListDao: MainListDao =
 
     init {
         observeItems = repo.observeAll()
         _forceUpdate.value = true
     }
 
-//    val items: List<ListItemData> =
-
     fun addItem(item: ListItemData? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             repo.insert(
-                ListItemData(
+                item ?: ListItemData(
                     title = MainListRepoFakeData.getFakeNewTitle(),
                     isDone = false,
                 )
@@ -48,7 +45,10 @@ class MainListViewModel(
 //        item?.let { _list.remove(it) }
     }
 
-    fun changeItemCheckStatus(id: Int, checked: Boolean) {
+    fun changeItemCheckStatus(id: String, checked: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.updateStatus(id = id, isDone = checked)
+        }
 //        val item = _list.find { it.id == id }
 //        val index = _list.indexOf(item)
 //        item?.let {

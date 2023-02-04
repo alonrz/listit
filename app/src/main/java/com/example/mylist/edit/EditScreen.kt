@@ -14,9 +14,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mylist.navigation.ScreenNavigation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,6 +26,7 @@ fun EditScreen(
     modifier: Modifier = Modifier.background(Color.Blue),
     itemId: String,
     itemTitle: String,
+    isDone: Boolean,
     navController: NavController,
     lifecycle: Lifecycle,
 ) {
@@ -31,12 +34,14 @@ fun EditScreen(
         factory = EditViewModelFactory(
             itemId = itemId,
             itemTitle = itemTitle,
+            isDone = isDone,
             application = Application(),
             lifecycle = lifecycle,
         )
     )
-    var textFieldValue = viewModel.itemTitle
+    val textFieldValue = viewModel.itemTitle
     val focusRequester = remember { FocusRequester() }
+    var openDeleteDialog by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -45,7 +50,7 @@ fun EditScreen(
         TextField(
             value = textFieldValue.value,
             onValueChange = {
-                kotlin.synchronized(this) {
+                synchronized(this) {
                     textFieldValue.value = it
                     viewModel.changeItemTitle(it)
                 }
@@ -58,11 +63,14 @@ fun EditScreen(
         Text(
             text = viewModel.itemTitle.value,
             color = Color.Cyan,
+            lineHeight = 50.sp,
             fontSize = MaterialTheme.typography.displayLarge.fontSize,
             fontWeight = FontWeight.Bold,
         )
         Button(
-            onClick = { viewModel.deleteItem() },
+            onClick = {
+                openDeleteDialog = true
+            },
         ) {
             Icon(
                 imageVector = Icons.Filled.Delete,
@@ -73,6 +81,32 @@ fun EditScreen(
             Text(text = "Delete")
         }
 
+        Text(text = "is done?")
+        Text(text = if (viewModel.isDone.value) "Done" else "Not Done")
+
+        if (openDeleteDialog) {
+            AlertDialog(onDismissRequest = { openDeleteDialog = false },
+                title = {
+                    Text(text = "Delete Item")
+                },
+                text = {
+                    Text(text = "Are you sure you want to delete this item?")
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        viewModel.deleteItem()
+                        navController.navigate(route = ScreenNavigation.Root.route)
+                    }) {
+                        Text("Delete")
+                    }
+
+                },
+                dismissButton = {
+                    Button(onClick = { openDeleteDialog = false }) {
+                        Text("Cancel")
+                    }
+                })
+        }
         LaunchedEffect(key1 = Unit, block = { focusRequester.requestFocus() })
     }
 }

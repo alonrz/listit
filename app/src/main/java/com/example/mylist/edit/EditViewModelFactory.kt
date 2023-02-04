@@ -13,6 +13,7 @@ import com.example.mylist.data.*
 class EditViewModelFactory(
     val itemId: String,
     val itemTitle: String,
+    val isDone: Boolean,
     private val application: Application,
     val lifecycle: Lifecycle,
 ) : ViewModelProvider.Factory {
@@ -23,6 +24,7 @@ class EditViewModelFactory(
         return EditViewModel(
             itemId = itemId,
             itemTitle = mutableStateOf(itemTitle),
+            isDone = mutableStateOf(isDone),
             repo = RepoProvider.getRepo(RepoProvider.TypesOfData.Local, application),
             lifecycle = lifecycle,
         ) as T

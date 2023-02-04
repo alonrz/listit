@@ -52,6 +52,9 @@ class MainListRepoFakeData(
         TODO("Not yet implemented")
     }
 
+    override suspend fun updateStatus(id: String, isDone: Boolean) {
+        TODO("Not yet implemented")
+    }
 
     companion object {
         fun getFakeNewTitle(): String {
