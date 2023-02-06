@@ -15,6 +15,8 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -85,9 +87,9 @@ fun RootScreen(
                 }
             }
         }
-    ) { paddingValues ->
+    ) { innerPaddingValues ->
         MainListView(
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier.padding(innerPaddingValues),
             viewModel = viewModel,
             navController = navController,
         )
@@ -100,8 +102,8 @@ fun AddNewItemUi(viewModel: MainListViewModel, finishedAddingItem: () -> Unit) {
     var textFieldValue by remember {
         mutableStateOf("")
     }
-    val context = LocalContext.current
-    Row() {
+    val focusRequester = remember { FocusRequester() }
+    Row {
         TextField(
             value = textFieldValue,
             onValueChange = {
@@ -110,6 +112,7 @@ fun AddNewItemUi(viewModel: MainListViewModel, finishedAddingItem: () -> Unit) {
             Modifier
                 .weight(1f)
                 .background(Color.Green)
+                .focusRequester(focusRequester)
                 .padding(
                     paddingValues = PaddingValues(
                         start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp
@@ -117,16 +120,18 @@ fun AddNewItemUi(viewModel: MainListViewModel, finishedAddingItem: () -> Unit) {
                 ),
             placeholder = { Text(text = "enter new item") },
             trailingIcon = {
-                IconButton(onClick = {
-                    viewModel.addItem(ListItemData(title = textFieldValue))
-                    finishedAddingItem()
-                }) {
+                IconButton(enabled = textFieldValue.isNotEmpty(),
+                    onClick = {
+                        viewModel.addItem(ListItemData(title = textFieldValue))
+                        finishedAddingItem()
+                    }) {
                     Icon(
                         imageVector = Icons.Filled.Send,
                         contentDescription = "Add a task to the list",
                     )
                 }
             })
+        LaunchedEffect(key1 = Unit, block = { focusRequester.requestFocus() })
     }
 }
 
