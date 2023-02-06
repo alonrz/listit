@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -22,12 +24,12 @@ fun ListItemView(
     onCheckedClick: (Boolean) -> Unit,
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isChecked: Boolean = false,
+    isDone: Boolean = false,
 ) {
     Card(
         modifier = Modifier.padding(8.dp),
         shape = CardDefaults.outlinedShape,
-        border = BorderStroke(width = 1.dp, color = Color.Black)
+        border = BorderStroke(width = 1.dp, color = if (isDone) Color.Gray else Color.Black)
     ) {
         Row(
             modifier = modifier
@@ -37,12 +39,16 @@ fun ListItemView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
-                checked = isChecked,
+                checked = isDone,
                 onCheckedChange = onCheckedClick,
             )
             Text(
                 text = title,
-                color = Color(red = 204, green = 33, blue = 255 )
+                style = TextStyle(
+                    textDecoration = if (isDone) TextDecoration.LineThrough else TextDecoration.None
+                ),
+                color = if (isDone) Color.Gray else Color(red = 204, green = 33, blue = 255)
+
             )
         }
     }

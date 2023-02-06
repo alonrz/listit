@@ -16,10 +16,9 @@ class MainListViewModel(
 ) : AndroidViewModel(application) {
     private val _forceUpdate = MutableLiveData<Boolean>(false)
     private val _dataLoading = MutableLiveData<Boolean>(false)
-    val observeItems: LiveData<List<ListItemData>>
+    val observeItems: LiveData<List<ListItemData>> = repo.observeAll()
 
     init {
-        observeItems = repo.observeAll()
         _forceUpdate.value = true
     }
 
@@ -41,25 +40,11 @@ class MainListViewModel(
 
     fun removeItem(id: String) {
         repo.deleteById(id)
-//        val item = repo.delete()_list.find { it.id == id }
-//        item?.let { _list.remove(it) }
     }
 
     fun changeItemCheckStatus(id: String, checked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             repo.updateStatus(id = id, isDone = checked)
         }
-//        val item = _list.find { it.id == id }
-//        val index = _list.indexOf(item)
-//        item?.let {
-//            _list.set(
-//                index = index, element =
-//                ListItemData(
-//                    title = it.title,
-//                    id = it.id,
-//                    isDone = checked,
-//                )
-//            )
-//        }
     }
 }

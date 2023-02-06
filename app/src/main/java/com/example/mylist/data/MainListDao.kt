@@ -12,7 +12,13 @@ interface MainListDao {
     @Query("SELECT * FROM main_list")
     fun observeAll(): LiveData<List<ListItemData>>
 
-    @Query("SELECT * FROM main_list")
+    @Query("SELECT * FROM main_list WHERE isDone = 1")
+    fun observeAllDone(): LiveData<List<ListItemData>>
+
+    @Query("SELECT * FROM main_list WHERE isDone = 0")
+    fun observeAllNotDone(): LiveData<List<ListItemData>>
+
+    @Query("SELECT * FROM main_list ")
     fun getAll(): List<ListItemData>
 
     @Query("SELECT * FROM main_list WHERE id = :id")
