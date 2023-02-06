@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.mylist.edit.EditScreen
 import com.example.mylist.root.RootScreen
+import com.example.mylist.settings.SettingsScreen
 
 @Composable
 fun setupNavGraph(
@@ -45,6 +46,13 @@ fun setupNavGraph(
                 itemTitle = it.arguments?.getString(EDIT_ARGUMENT_KEY2) ?: "",
                 isDone = it.arguments?.getBoolean(EDIT_ARGUMENT_KEY3) ?: false,
                 lifecycle = lifecycle,
+            )
+        }
+        composable(
+            route = ScreenNavigation.Settings.route
+        ) {
+            SettingsScreen(
+
             )
         }
     }

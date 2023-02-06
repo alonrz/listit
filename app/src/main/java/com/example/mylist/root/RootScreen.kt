@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -23,7 +24,8 @@ import androidx.navigation.NavController
 import com.example.mylist.mainlist.MainListViewModel
 import com.example.mylist.mainlist.MainListViewModelFactory
 import com.example.mylist.models.ListItemData
-import com.example.mylist.views.MainListView
+import com.example.mylist.mainlist.MainListView
+import com.example.mylist.navigation.ScreenNavigation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,6 +64,15 @@ fun RootScreen(
                         color = Color(red = 255, green = 0, blue = 66)
                     )
                 },
+                actions = {
+                    IconButton(onClick = { navController.navigate(route = ScreenNavigation.Settings.route) }) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = "Open Settings",
+                            modifier = Modifier.padding(PaddingValues(end = 12.dp))
+                        )
+                    }
+                }
             )
         },
         bottomBar = {

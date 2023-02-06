@@ -13,4 +13,6 @@ sealed class ScreenNavigation(val route: String) {
             return "edit_screen/$id/$title/$isDone"
         }
     }
+
+    object Settings : ScreenNavigation(route = "settings_screen")
 }
