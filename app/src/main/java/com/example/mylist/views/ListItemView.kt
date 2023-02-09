@@ -47,8 +47,6 @@ fun ListItemView(
                 style = TextStyle(
                     textDecoration = if (isDone) TextDecoration.LineThrough else TextDecoration.None
                 ),
-                color = if (isDone) Color.Gray else Color(red = 204, green = 33, blue = 255)
-
             )
         }
     }

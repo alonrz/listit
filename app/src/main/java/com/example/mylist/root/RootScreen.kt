@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -18,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -63,7 +61,6 @@ fun RootScreen(
                 title = {
                     Text(
                         text = "Remember Board",
-                        color = Color(red = 255, green = 0, blue = 66)
                     )
                 },
                 navigationIcon = {
@@ -89,7 +86,7 @@ fun RootScreen(
         },
         bottomBar = {
             if (promptAddNewItemUi) {
-                BottomAppBar(containerColor = Color.Green) {
+                BottomAppBar() {
                     // TODO: close this prompt if back if pressed.
                     AddNewItemUi(viewModel = viewModel, finishedAddingItem = {
                         promptAddNewItemUi = false
@@ -121,7 +118,6 @@ fun AddNewItemUi(viewModel: MainListViewModel, finishedAddingItem: () -> Unit) {
             },
             Modifier
                 .weight(1f)
-                .background(Color.Green)
                 .focusRequester(focusRequester)
                 .padding(
                     paddingValues = PaddingValues(
