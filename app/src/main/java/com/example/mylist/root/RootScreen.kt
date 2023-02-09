@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -18,15 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mylist.mainlist.MainListView
 import com.example.mylist.mainlist.MainListViewModel
 import com.example.mylist.mainlist.MainListViewModelFactory
 import com.example.mylist.models.ListItemData
-import com.example.mylist.mainlist.MainListView
 import com.example.mylist.navigation.ScreenNavigation
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,6 +65,16 @@ fun RootScreen(
                         text = "Remember Board",
                         color = Color(red = 255, green = 0, blue = 66)
                     )
+                },
+                navigationIcon = {
+                    if (navController.previousBackStackEntry != null) {
+                        IconButton(onClick = { navController.navigateUp() }) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "Back",
+                            )
+                        }
+                    } else null
                 },
                 actions = {
                     IconButton(onClick = { navController.navigate(route = ScreenNavigation.Settings.route) }) {

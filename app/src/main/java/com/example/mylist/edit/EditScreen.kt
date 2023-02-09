@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -42,72 +43,112 @@ fun EditScreen(
     val textFieldValue = viewModel.itemTitle
     val focusRequester = remember { FocusRequester() }
     var openDeleteDialog by remember { mutableStateOf(false) }
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(paddingValues = PaddingValues(all = 16.dp)),
-    ) {
-        TextField(
-            value = textFieldValue.value,
-            onValueChange = {
-                synchronized(this) {
-                    textFieldValue.value = it
-                    viewModel.changeItemTitle(it)
-                }
-            },
-            modifier = Modifier
-                .focusRequester(focusRequester)
-                .height(200.dp),
-            singleLine = false,
-        )
-        Text(
-            text = viewModel.itemTitle.value,
-            color = Color.Cyan,
-            lineHeight = 50.sp,
-            fontSize = MaterialTheme.typography.displayLarge.fontSize,
-            fontWeight = FontWeight.Bold,
-        )
-        Button(
-            onClick = {
-                openDeleteDialog = true
-            },
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Delete,
-                contentDescription = "Delete item",
-                modifier = Modifier.size(ButtonDefaults.IconSize)
-            )
-            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-            Text(text = "Delete")
-        }
-
-        Text(text = "is done?")
-        Text(text = if (viewModel.isDone.value) "Done" else "Not Done")
-
-        if (openDeleteDialog) {
-            AlertDialog(onDismissRequest = { openDeleteDialog = false },
+    Scaffold(
+        topBar = {
+            TopAppBar(
                 title = {
-                    Text(text = "Delete Item")
+                    Text(
+                        text = if (itemTitle.isBlank()) "Item" else
+                            itemTitle.let { str ->
+                                if (str.length < 15) str
+                                else {
+                                    val trucatedString = str.substring(
+                                        startIndex = 0,
+                                        endIndex = 15
+                                    )
+                                    val index = trucatedString.lastIndexOf(' ')
+                                    if (index == 14) str
+                                    else if (index > 10) "${
+                                        str.substring(
+                                            startIndex = 0,
+                                            endIndex = index
+                                        )
+                                    }..."
+                                    else "$str..."
+                                }
+                            },
+                    )
                 },
-                text = {
-                    Text(text = "Are you sure you want to delete this item?")
+                navigationIcon = {
+                    if (navController.previousBackStackEntry != null) {
+                        IconButton(onClick = { navController.navigateUp() }) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "Back",
+                            )
+                        }
+                    } else null
                 },
-                confirmButton = {
-                    Button(onClick = {
-                        viewModel.deleteItem()
-                        navController.navigate(route = ScreenNavigation.Root.route)
-                    }) {
-                        Text("Delete")
+            )
+        },
+    ) { innerPaddingValues ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPaddingValues/*paddingValues = PaddingValues(all = 16.dp)*/),
+        ) {
+            TextField(
+                value = textFieldValue.value,
+                onValueChange = {
+                    synchronized(this) {
+                        textFieldValue.value = it
+                        viewModel.changeItemTitle(it)
                     }
+                },
+                modifier = Modifier
+                    .focusRequester(focusRequester)
+                    .height(200.dp),
+                singleLine = false,
+            )
+            Text(
+                text = viewModel.itemTitle.value,
+                color = Color.Cyan,
+                lineHeight = 50.sp,
+                fontSize = MaterialTheme.typography.displayLarge.fontSize,
+                fontWeight = FontWeight.Bold,
+            )
+            Button(
+                onClick = {
+                    openDeleteDialog = true
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = "Delete item",
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                )
+                Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+                Text(text = "Delete")
+            }
 
-                },
-                dismissButton = {
-                    Button(onClick = { openDeleteDialog = false }) {
-                        Text("Cancel")
-                    }
-                })
+            Text(text = "is done?")
+            Text(text = if (viewModel.isDone.value) "Done" else "Not Done")
+
+            if (openDeleteDialog) {
+                AlertDialog(onDismissRequest = { openDeleteDialog = false },
+                    title = {
+                        Text(text = "Delete Item")
+                    },
+                    text = {
+                        Text(text = "Are you sure you want to delete this item?")
+                    },
+                    confirmButton = {
+                        Button(onClick = {
+                            viewModel.deleteItem()
+                            navController.navigate(route = ScreenNavigation.Root.route)
+                        }) {
+                            Text("Delete")
+                        }
+
+                    },
+                    dismissButton = {
+                        Button(onClick = { openDeleteDialog = false }) {
+                            Text("Cancel")
+                        }
+                    })
+            }
+            LaunchedEffect(key1 = Unit, block = { focusRequester.requestFocus() })
         }
-        LaunchedEffect(key1 = Unit, block = { focusRequester.requestFocus() })
     }
 }
 
