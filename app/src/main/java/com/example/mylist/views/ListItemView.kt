@@ -15,12 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun ListItemView(
     title: String,
-    id: String,
     onCheckedClick: (Boolean) -> Unit,
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -44,6 +44,8 @@ fun ListItemView(
             )
             Text(
                 text = title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 style = TextStyle(
                     textDecoration = if (isDone) TextDecoration.LineThrough else TextDecoration.None
                 ),
