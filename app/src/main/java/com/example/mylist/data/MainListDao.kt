@@ -1,22 +1,22 @@
 package com.example.mylist.data
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.mylist.models.ListItemData
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MainListDao {
     @Query("SELECT * FROM main_list")
-    fun observeAll(): LiveData<List<ListItemData>>
+    fun observeAll(): Flow<List<ListItemData>>
 
     @Query("SELECT * FROM main_list WHERE isDone = 1")
-    fun observeAllDone(): LiveData<List<ListItemData>>
+    fun observeAllDone(): Flow<List<ListItemData>>
 
     @Query("SELECT * FROM main_list WHERE isDone = 0")
-    fun observeAllNotDone(): LiveData<List<ListItemData>>
+    fun observeAllNotDone(): Flow<List<ListItemData>>
 
     @Query("SELECT * FROM main_list ")
     fun getAll(): List<ListItemData>

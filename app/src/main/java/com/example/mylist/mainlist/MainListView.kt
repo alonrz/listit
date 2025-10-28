@@ -6,9 +6,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.mylist.models.ListItemData
 import com.example.mylist.navigation.ScreenNavigation
@@ -21,7 +21,7 @@ fun MainListView(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    val listItems by viewModel.observeItems.observeAsState(initial = emptyList())
+    val listItems by viewModel.observeItems.collectAsStateWithLifecycle()
     var onlyShowDone by remember { mutableStateOf(false) }
 
     LazyColumn(modifier = modifier.fillMaxSize()) {

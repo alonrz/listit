@@ -10,7 +10,7 @@ object RepoProvider {
     fun getRepo(
         typeOfRepo: TypesOfData,
         application: Application,
-    ): GenericRepo {
+    ): ItemsRepo {
         return when (typeOfRepo) {
             TypesOfData.Fake ->
                 MainListRepoFakeData(lifecycleOwner = null)

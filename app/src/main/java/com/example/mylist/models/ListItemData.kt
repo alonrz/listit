@@ -10,6 +10,4 @@ data class ListItemData(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
     @ColumnInfo val title: String,
     @ColumnInfo val isDone: Boolean = false,
-) {
-
-}
+)

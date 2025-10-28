@@ -1,15 +1,15 @@
 package com.example.mylist.data
 
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.example.mylist.models.ListItemData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class MainListRepoFakeData(
     private val lifecycleOwner: LifecycleOwner?,
-) : GenericRepo {
-    private val _list = MutableLiveData(
+) : ItemsRepo {
+    private val _list = MutableStateFlow(
         listOf(
             ListItemData(title = getFakeNewTitle()),
             ListItemData(title = getFakeNewTitle()),
@@ -20,15 +20,11 @@ class MainListRepoFakeData(
     )
 
     override fun getAll(): List<ListItemData> {
-        return _list.value ?: emptyList()
+        return _list.value
     }
 
-    private val listItemDataObserver = Observer<List<ListItemData>> {
-//        it.
-    }
-
-    override fun observeAll(): LiveData<List<ListItemData>> {
-        return _list
+    override fun observeAll(): Flow<List<ListItemData>> {
+        return _list.asStateFlow()
     }
 
     override suspend fun findById(id: String): ListItemData {
@@ -38,7 +34,6 @@ class MainListRepoFakeData(
     override suspend fun insert(item: ListItemData) {
 //        _list.value?.add(item)
     }
-
 
     override fun delete(item: ListItemData) {
         TODO("Not yet implemented")

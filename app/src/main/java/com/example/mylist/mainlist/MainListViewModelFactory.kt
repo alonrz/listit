@@ -14,10 +14,6 @@ class MainListViewModelFactory(
     val lifecycle: Lifecycle,
 ) : ViewModelProvider.Factory {
 
-    enum class TypesOfData {
-        Fake, Local
-    }
-
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         val savedStateHandle = extras.createSavedStateHandle()
 

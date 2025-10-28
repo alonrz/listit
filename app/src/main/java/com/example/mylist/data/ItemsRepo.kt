@@ -1,12 +1,12 @@
 package com.example.mylist.data
 
-import androidx.lifecycle.LiveData
 import com.example.mylist.models.ListItemData
+import kotlinx.coroutines.flow.Flow
 
-interface GenericRepo {
+interface ItemsRepo {
     fun getAll(): List<ListItemData>
 
-    fun observeAll(): LiveData<List<ListItemData>>
+    fun observeAll(): Flow<List<ListItemData>>
 
     suspend fun findById(id: String): ListItemData
 

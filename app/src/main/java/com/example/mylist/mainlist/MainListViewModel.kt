@@ -5,18 +5,32 @@ import androidx.lifecycle.*
 import com.example.mylist.data.*
 import com.example.mylist.models.ListItemData
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 
 @Suppress("UNCHECKED_CAST")
 class MainListViewModel(
     application: Application,
-    private val repo: GenericRepo,
+    private val repo: ItemsRepo,
     private val savedStateHandle: SavedStateHandle,
     lifecycle: Lifecycle,
 ) : AndroidViewModel(application) {
-    private val _forceUpdate = MutableLiveData<Boolean>(false)
-    private val _dataLoading = MutableLiveData<Boolean>(false)
-    val observeItems: LiveData<List<ListItemData>> = repo.observeAll()
+    private val _forceUpdate = MutableStateFlow(false)
+    val forceUpdate: StateFlow<Boolean> = _forceUpdate.asStateFlow()
+
+    private val _dataLoading = MutableStateFlow(false)
+    val dataLoading: StateFlow<Boolean> = _dataLoading.asStateFlow()
+
+    val observeItems: StateFlow<List<ListItemData>> = repo.observeAll()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     init {
         _forceUpdate.value = true
@@ -31,11 +45,6 @@ class MainListViewModel(
                 )
             )
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-//        repo.observeAll().removeObserver(observeItems)
     }
 
     fun removeItem(id: String) {

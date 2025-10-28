@@ -1,17 +1,17 @@
 package com.example.mylist.data
 
-import androidx.lifecycle.LiveData
 import com.example.mylist.models.ListItemData
+import kotlinx.coroutines.flow.Flow
 
 /*
 Following repository pattern in article https://medium.com/swlh/repository-pattern-in-android-c31d0268118c
  */
-class MainListRepoLocalData(private val mainListDAO: MainListDao) : GenericRepo {
+class MainListRepoLocalData(private val mainListDAO: MainListDao) : ItemsRepo {
     override fun getAll(): List<ListItemData> {
         return mainListDAO.getAll()
     }
 
-    override fun observeAll(): LiveData<List<ListItemData>> {
+    override fun observeAll(): Flow<List<ListItemData>> {
         return mainListDAO.observeAll()
     }
 
