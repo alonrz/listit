@@ -9,36 +9,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.mylist.ListItApplication
 import com.example.mylist.presentation.navigation.ScreenNavigation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditScreen(
     modifier: Modifier = Modifier,
-    itemId: String,
-    itemTitle: String,
-    isDone: Boolean,
     navController: NavController,
 ) {
-    val application = LocalContext.current.applicationContext as ListItApplication
-    val viewModel: EditViewModel = viewModel {
-        val container = application.container
-        EditViewModel(
-            itemId = itemId,
-            itemTitle = mutableStateOf(itemTitle),
-            isDone = mutableStateOf(isDone),
-            updateItemTitleUseCase = container.updateItemTitle,
-            deleteItemUseCase = container.deleteItem,
-        )
-    }
+    val viewModel: EditViewModel = hiltViewModel()
     val textFieldValue = viewModel.itemTitle
     val focusRequester = remember { FocusRequester() }
     var openDeleteDialog by remember { mutableStateOf(false) }
@@ -47,8 +32,8 @@ fun EditScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = if (itemTitle.isBlank()) "Item" else
-                            itemTitle.let { str ->
+                        text = if (viewModel.itemTitle.value.isBlank()) "Item" else
+                            viewModel.itemTitle.value.let { str ->
                                 if (str.length < 15) str
                                 else {
                                     val trucatedString = str.substring(

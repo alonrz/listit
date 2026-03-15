@@ -7,8 +7,9 @@ import com.example.mylist.domain.model.ListItem
 import com.example.mylist.domain.repository.ListItemRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class ListItemRepositoryImpl(private val dao: MainListDao) : ListItemRepository {
+class ListItemRepositoryImpl @Inject constructor(private val dao: MainListDao) : ListItemRepository {
 
     override fun observeAll(): Flow<List<ListItem>> =
         dao.observeAll().map { list -> list.map { it.toDomain() } }

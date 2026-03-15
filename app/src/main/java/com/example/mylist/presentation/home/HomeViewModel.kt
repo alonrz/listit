@@ -7,13 +7,16 @@ import com.example.mylist.domain.usecase.AddItemUseCase
 import com.example.mylist.domain.usecase.DeleteItemUseCase
 import com.example.mylist.domain.usecase.ObserveItemsUseCase
 import com.example.mylist.domain.usecase.UpdateItemStatusUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     observeItemsUseCase: ObserveItemsUseCase,
     private val addItemUseCase: AddItemUseCase,
     private val deleteItemUseCase: DeleteItemUseCase,

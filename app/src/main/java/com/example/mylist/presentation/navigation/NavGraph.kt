@@ -11,7 +11,7 @@ import com.example.mylist.presentation.root.RootScreen
 import com.example.mylist.presentation.settings.SettingsScreen
 
 @Composable
-fun setupNavGraph(
+fun SetupNavGraph(
     navController: NavHostController,
 ) {
     NavHost(
@@ -35,9 +35,6 @@ fun setupNavGraph(
         ) {
             EditScreen(
                 navController = navController,
-                itemId = it.arguments?.getString(EDIT_ARGUMENT_KEY) ?: "",
-                itemTitle = it.arguments?.getString(EDIT_ARGUMENT_KEY2) ?: "",
-                isDone = it.arguments?.getBoolean(EDIT_ARGUMENT_KEY3) ?: false,
             )
         }
         composable(

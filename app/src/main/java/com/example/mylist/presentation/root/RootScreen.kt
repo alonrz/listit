@@ -16,11 +16,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.mylist.ListItApplication
 import com.example.mylist.presentation.home.MainListView
 import com.example.mylist.presentation.home.HomeViewModel
 import com.example.mylist.presentation.navigation.ScreenNavigation
@@ -30,17 +28,8 @@ import com.example.mylist.presentation.navigation.ScreenNavigation
 fun RootScreen(
     navController: NavController,
 ) {
-    val application = LocalContext.current.applicationContext as ListItApplication
     var promptAddNewItemUi by remember { mutableStateOf(false) }
-    val viewModel: HomeViewModel = viewModel {
-        val container = application.container
-        HomeViewModel(
-            observeItemsUseCase = container.observeItems,
-            addItemUseCase = container.addItem,
-            deleteItemUseCase = container.deleteItem,
-            updateItemStatusUseCase = container.updateItemStatus,
-        )
-    }
+    val viewModel: HomeViewModel = hiltViewModel()
     BackPressedHandler(
         onBackPressed = { promptAddNewItemUi = false },
         isEnabled = promptAddNewItemUi
