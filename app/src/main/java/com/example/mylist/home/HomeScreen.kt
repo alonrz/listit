@@ -1,4 +1,4 @@
-package com.example.mylist.mainlist
+package com.example.mylist.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +26,7 @@ import com.example.mylist.views.ListItemView
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainListView(
-    viewModel: MainListViewModel,
+    viewModel: HomeViewModel,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {

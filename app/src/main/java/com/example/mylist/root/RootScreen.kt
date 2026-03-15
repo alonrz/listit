@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.mylist.mainlist.MainListView
-import com.example.mylist.mainlist.MainListViewModel
-import com.example.mylist.mainlist.MainListViewModelFactory
+import com.example.mylist.home.MainListView
+import com.example.mylist.home.HomeViewModel
+import com.example.mylist.home.HomeViewModelFactory
 import com.example.mylist.models.ListItemData
 import com.example.mylist.navigation.ScreenNavigation
 
@@ -35,9 +35,9 @@ fun RootScreen(
     lifecycle: Lifecycle,
 ) {
     var promptAddNewItemUi by remember { mutableStateOf(false) }
-    val viewModel: MainListViewModel =
+    val viewModel: HomeViewModel =
         viewModel(
-            factory = MainListViewModelFactory(
+            factory = HomeViewModelFactory(
                 application = application,
                 lifecycle = lifecycle,
 
@@ -105,7 +105,7 @@ fun RootScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddNewItemUi(viewModel: MainListViewModel, finishedAddingItem: () -> Unit) {
+fun AddNewItemUi(viewModel: HomeViewModel, finishedAddingItem: () -> Unit) {
     var textFieldValue by remember {
         mutableStateOf("")
     }

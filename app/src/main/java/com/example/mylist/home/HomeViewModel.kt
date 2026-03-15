@@ -1,4 +1,4 @@
-package com.example.mylist.mainlist
+package com.example.mylist.home
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Suppress("UNCHECKED_CAST")
-class MainListViewModel(
+class HomeViewModel(
     application: Application,
     private val repo: ItemsRepo,
     private val savedStateHandle: SavedStateHandle,

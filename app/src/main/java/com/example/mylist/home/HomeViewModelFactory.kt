@@ -1,4 +1,4 @@
-package com.example.mylist.mainlist
+package com.example.mylist.home
 
 import android.app.Application
 import androidx.lifecycle.Lifecycle
@@ -9,7 +9,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.mylist.data.*
 
 @Suppress("UNCHECKED_CAST")
-class MainListViewModelFactory(
+class HomeViewModelFactory(
     private val application: Application,
     val lifecycle: Lifecycle,
 ) : ViewModelProvider.Factory {
@@ -17,7 +17,7 @@ class MainListViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         val savedStateHandle = extras.createSavedStateHandle()
 
-        return MainListViewModel(
+        return HomeViewModel(
             application = application,
             repo = RepoProvider.getRepo(RepoProvider.TypesOfData.Local, application),
             savedStateHandle = savedStateHandle,
