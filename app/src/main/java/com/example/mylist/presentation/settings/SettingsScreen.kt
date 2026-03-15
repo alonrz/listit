@@ -1,4 +1,4 @@
-package com.example.mylist.settings
+package com.example.mylist.presentation.settings
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

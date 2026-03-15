@@ -1,4 +1,4 @@
-package com.example.mylist.navigation
+package com.example.mylist.presentation.navigation
 
 const val EDIT_ARGUMENT_KEY = "id"
 const val EDIT_ARGUMENT_KEY2 = "title"

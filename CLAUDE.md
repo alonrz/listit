@@ -26,24 +26,42 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
-**ListIt** is a single-module Android to-do list app using **Jetpack Compose**, **MVVM**, and the **Repository pattern**.
+**ListIt** is a single-module Android to-do list app following **Clean Architecture** with three layers: domain, data, and presentation.
 
-### Layers
+### Domain Layer (`domain/`)
 
-- **UI (Compose):** `root/RootScreen` provides the main scaffold (TopAppBar, BottomAppBar, FAB). Screens live in feature packages (`home/`, `edit/`, `settings/`).
-- **ViewModels:** Use `StateFlow` + coroutines for reactive state. Each ViewModel has a corresponding Factory class for dependency injection (no Hilt/Dagger — manual factory pattern).
-- **Repository:** `ItemsRepo` interface with two implementations — `MainListRepoLocalData` (Room) and `MainListRepoFakeData` (mock). `RepoProvider` selects which to use.
-- **Room Database:** Single table `main_list` via `AppDatabase` singleton. `MainListDao` returns `Flow<List<ListItemData>>` for reactive queries. UUID-based primary keys.
+Pure Kotlin with no Android dependencies.
 
-### Navigation
+- **`model/ListItem`** — domain model (id, title, isDone)
+- **`repository/ListItemRepository`** — interface defining data operations (dependency rule: domain owns this)
+- **`usecase/`** — one class per operation (`ObserveItemsUseCase`, `AddItemUseCase`, `DeleteItemUseCase`, `UpdateItemTitleUseCase`, `UpdateItemStatusUseCase`), each with `operator fun invoke()`
 
-Type-safe navigation using a sealed class `ScreenNavigation` in `navigation/`. Routes: Root → Home, Edit (with item ID/title/isDone args), Settings. Wired in `NavGraph.kt`.
+### Data Layer (`data/`)
+
+- **`local/`** — Room database: `AppDatabase` singleton, `MainListDao`, `ListItemEntity` (@Entity for `main_list` table)
+- **`repository/ListItemRepositoryImpl`** — implements `ListItemRepository`, delegates to DAO with entity↔domain mapping
+- **`mapper/ListItemMapper`** — extension functions `ListItemEntity.toDomain()` and `ListItem.toEntity()`
+- **`fake/FakeListItemRepository`** — in-memory implementation for previews/testing
+
+### Presentation Layer (`presentation/`)
+
+- **`root/RootScreen`** — main scaffold with TopAppBar, FAB, BottomAppBar
+- **`home/`** — HomeScreen (LazyColumn list) + HomeViewModel
+- **`edit/`** — EditScreen (item editing) + EditViewModel
+- **`settings/SettingsScreen`** — placeholder
+- **`navigation/`** — `ScreenNavigation` sealed class routes, `NavGraph` wiring
+- **`components/ListItemView`** — reusable list item composable
+
+### Dependency Injection (`di/`)
+
+Manual DI via `AppContainer` (created in `ListItApplication.onCreate()`). No Hilt/Dagger. Screens access the container via `LocalContext.current.applicationContext as ListItApplication`. ViewModels are created with inline `viewModel { }` factory lambdas.
 
 ### Key Technical Details
 
 - **Min SDK 21 / Target SDK 35**, compiled with JDK 17
 - Compose BOM `2025.08.00`, Material3
 - Room 2.7.1 with KSP compiler
-- Reactive chain: Room `Flow` → ViewModel `stateIn()` → Compose `collectAsStateWithLifecycle()`
+- Reactive chain: Room `Flow` → DAO → RepositoryImpl (maps to domain) → UseCase → ViewModel `stateIn()` → Compose `collectAsStateWithLifecycle()`
 - Dynamic color theming on Android 12+ (`ListItTheme`)
 - Database uses destructive fallback migration
+- Navigation passes item data (id/title/isDone) as URL route arguments

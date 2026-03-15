@@ -1,4 +1,4 @@
-package com.example.mylist.views
+package com.example.mylist.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable

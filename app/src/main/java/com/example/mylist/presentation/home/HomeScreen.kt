@@ -1,4 +1,4 @@
-package com.example.mylist.home
+package com.example.mylist.presentation.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -18,10 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.mylist.models.ListItemData
-import com.example.mylist.navigation.ScreenNavigation
+import com.example.mylist.domain.model.ListItem
+import com.example.mylist.presentation.navigation.ScreenNavigation
 import com.example.mylist.ui.theme.ListItTheme
-import com.example.mylist.views.ListItemView
+import com.example.mylist.presentation.components.ListItemView
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -54,7 +54,7 @@ fun MainListView(
 @Composable
 private fun MainListViewInternal(
     modifier: Modifier = Modifier,
-    listItems: List<ListItemData>,
+    listItems: List<ListItem>,
     onItemClick: (id: String, title: String, isDone: Boolean) -> Unit,
     onCheckedClick: (id: String, isDone: Boolean) -> Unit,
 ) {
@@ -63,7 +63,7 @@ private fun MainListViewInternal(
     LazyColumn(modifier = modifier.fillMaxSize()) {
         items(items = listItems.filter {
             it.isDone == onlyShowDone
-        }) { item: ListItemData ->
+        }) { item: ListItem ->
             ListItemView(
                 title = item.title,
                 isDone = item.isDone,
@@ -98,11 +98,11 @@ fun MainListViewPreview() {
     ListItTheme {
         MainListViewInternal(
             listItems = listOf(
-                ListItemData(id = "1", title = "Buy groceries", isDone = false),
-                ListItemData(id = "2", title = "Walk the dog", isDone = true),
-                ListItemData(id = "3", title = "Finish homework", isDone = false),
-                ListItemData(id = "4", title = "Call mom", isDone = false),
-                ListItemData(id = "5", title = "Read a book", isDone = true),
+                ListItem(id = "1", title = "Buy groceries", isDone = false),
+                ListItem(id = "2", title = "Walk the dog", isDone = true),
+                ListItem(id = "3", title = "Finish homework", isDone = false),
+                ListItem(id = "4", title = "Call mom", isDone = false),
+                ListItem(id = "5", title = "Read a book", isDone = true),
             ),
             onItemClick = { _, _, _ -> },
             onCheckedClick = { _, _ -> }

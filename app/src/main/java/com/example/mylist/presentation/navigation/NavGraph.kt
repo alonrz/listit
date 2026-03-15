@@ -1,24 +1,19 @@
-package com.example.mylist.navigation
+package com.example.mylist.presentation.navigation
 
-import android.app.Application
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.mylist.edit.EditScreen
-import com.example.mylist.root.RootScreen
-import com.example.mylist.settings.SettingsScreen
+import com.example.mylist.presentation.edit.EditScreen
+import com.example.mylist.presentation.root.RootScreen
+import com.example.mylist.presentation.settings.SettingsScreen
 
 @Composable
 fun setupNavGraph(
-    application: Application,
     navController: NavHostController,
-    lifecycle: Lifecycle,
-
-    ) {
+) {
     NavHost(
         navController = navController,
         startDestination = ScreenNavigation.Root.route,
@@ -27,9 +22,7 @@ fun setupNavGraph(
             route = ScreenNavigation.Root.route
         ) {
             RootScreen(
-                application = application,
                 navController = navController,
-                lifecycle = lifecycle,
             )
         }
         composable(
@@ -45,7 +38,6 @@ fun setupNavGraph(
                 itemId = it.arguments?.getString(EDIT_ARGUMENT_KEY) ?: "",
                 itemTitle = it.arguments?.getString(EDIT_ARGUMENT_KEY2) ?: "",
                 isDone = it.arguments?.getBoolean(EDIT_ARGUMENT_KEY3) ?: false,
-                lifecycle = lifecycle,
             )
         }
         composable(

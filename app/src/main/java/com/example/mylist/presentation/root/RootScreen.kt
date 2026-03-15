@@ -1,6 +1,5 @@
-package com.example.mylist.root
+package com.example.mylist.presentation.root
 
-import android.app.Application
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
@@ -17,32 +16,31 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.mylist.home.MainListView
-import com.example.mylist.home.HomeViewModel
-import com.example.mylist.home.HomeViewModelFactory
-import com.example.mylist.models.ListItemData
-import com.example.mylist.navigation.ScreenNavigation
+import com.example.mylist.ListItApplication
+import com.example.mylist.presentation.home.MainListView
+import com.example.mylist.presentation.home.HomeViewModel
+import com.example.mylist.presentation.navigation.ScreenNavigation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootScreen(
-    application: Application,
     navController: NavController,
-    lifecycle: Lifecycle,
 ) {
+    val application = LocalContext.current.applicationContext as ListItApplication
     var promptAddNewItemUi by remember { mutableStateOf(false) }
-    val viewModel: HomeViewModel =
-        viewModel(
-            factory = HomeViewModelFactory(
-                application = application,
-                lifecycle = lifecycle,
-
-                )
+    val viewModel: HomeViewModel = viewModel {
+        val container = application.container
+        HomeViewModel(
+            observeItemsUseCase = container.observeItems,
+            addItemUseCase = container.addItem,
+            deleteItemUseCase = container.deleteItem,
+            updateItemStatusUseCase = container.updateItemStatus,
         )
+    }
     BackPressedHandler(
         onBackPressed = { promptAddNewItemUi = false },
         isEnabled = promptAddNewItemUi
@@ -88,7 +86,9 @@ fun RootScreen(
             if (promptAddNewItemUi) {
                 BottomAppBar() {
                     // TODO: close this prompt if back if pressed.
-                    AddNewItemUi(viewModel = viewModel, finishedAddingItem = {
+                    AddNewItemUi(onAddItem = { title ->
+                        viewModel.addItem(title)
+                    }, finishedAddingItem = {
                         promptAddNewItemUi = false
                     })
                 }
@@ -105,7 +105,7 @@ fun RootScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddNewItemUi(viewModel: HomeViewModel, finishedAddingItem: () -> Unit) {
+fun AddNewItemUi(onAddItem: (String) -> Unit, finishedAddingItem: () -> Unit) {
     var textFieldValue by remember {
         mutableStateOf("")
     }
@@ -128,7 +128,7 @@ fun AddNewItemUi(viewModel: HomeViewModel, finishedAddingItem: () -> Unit) {
             trailingIcon = {
                 IconButton(enabled = textFieldValue.isNotEmpty(),
                     onClick = {
-                        viewModel.addItem(ListItemData(title = textFieldValue))
+                        onAddItem(textFieldValue)
                         finishedAddingItem()
                     }) {
                     Icon(
@@ -168,8 +168,3 @@ fun BackPressedHandler(
         }
     }
 }
-//@Composable
-//@Preview(showBackground = true)
-//fun RootScreenPreview() {
-//    RootScreen(navController = rememberNavController())
-//}

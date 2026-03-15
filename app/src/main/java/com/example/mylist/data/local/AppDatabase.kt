@@ -1,12 +1,11 @@
-package com.example.mylist.data
+package com.example.mylist.data.local
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.mylist.models.ListItemData
 
-@Database(entities = [ListItemData::class], version = 2)
+@Database(entities = [ListItemEntity::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun mainListDao(): MainListDao
 

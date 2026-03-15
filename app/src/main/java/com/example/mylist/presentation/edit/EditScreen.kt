@@ -1,6 +1,5 @@
-package com.example.mylist.edit
+package com.example.mylist.presentation.edit
 
-import android.app.Application
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -10,14 +9,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.mylist.navigation.ScreenNavigation
+import com.example.mylist.ListItApplication
+import com.example.mylist.presentation.navigation.ScreenNavigation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,17 +27,18 @@ fun EditScreen(
     itemTitle: String,
     isDone: Boolean,
     navController: NavController,
-    lifecycle: Lifecycle,
 ) {
-    val viewModel: EditViewModel = viewModel(
-        factory = EditViewModelFactory(
+    val application = LocalContext.current.applicationContext as ListItApplication
+    val viewModel: EditViewModel = viewModel {
+        val container = application.container
+        EditViewModel(
             itemId = itemId,
-            itemTitle = itemTitle,
-            isDone = isDone,
-            application = Application(),
-            lifecycle = lifecycle,
+            itemTitle = mutableStateOf(itemTitle),
+            isDone = mutableStateOf(isDone),
+            updateItemTitleUseCase = container.updateItemTitle,
+            deleteItemUseCase = container.deleteItem,
         )
-    )
+    }
     val textFieldValue = viewModel.itemTitle
     val focusRequester = remember { FocusRequester() }
     var openDeleteDialog by remember { mutableStateOf(false) }
@@ -83,7 +84,7 @@ fun EditScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(innerPaddingValues/*paddingValues = PaddingValues(all = 16.dp)*/),
+                .padding(innerPaddingValues),
         ) {
             TextField(
                 value = textFieldValue.value,

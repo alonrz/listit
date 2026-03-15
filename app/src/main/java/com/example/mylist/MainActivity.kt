@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.mylist.navigation.setupNavGraph
+import com.example.mylist.presentation.navigation.setupNavGraph
 import com.example.mylist.ui.theme.ListItTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,9 +19,7 @@ class MainActivity : ComponentActivity() {
             ListItTheme {
                 navController = rememberNavController()
                 setupNavGraph(
-                    application = application,
                     navController = navController,
-                    lifecycle = lifecycle,
                 )
             }
         }

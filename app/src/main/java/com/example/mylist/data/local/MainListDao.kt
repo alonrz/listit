@@ -1,41 +1,37 @@
-package com.example.mylist.data
+package com.example.mylist.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.mylist.models.ListItemData
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MainListDao {
     @Query("SELECT * FROM main_list")
-    fun observeAll(): Flow<List<ListItemData>>
+    fun observeAll(): Flow<List<ListItemEntity>>
 
     @Query("SELECT * FROM main_list WHERE isDone = 1")
-    fun observeAllDone(): Flow<List<ListItemData>>
+    fun observeAllDone(): Flow<List<ListItemEntity>>
 
     @Query("SELECT * FROM main_list WHERE isDone = 0")
-    fun observeAllNotDone(): Flow<List<ListItemData>>
-
-    @Query("SELECT * FROM main_list ")
-    fun getAll(): List<ListItemData>
+    fun observeAllNotDone(): Flow<List<ListItemEntity>>
 
     @Query("SELECT * FROM main_list WHERE id = :id")
-    suspend fun findById(id: String): ListItemData
+    suspend fun findById(id: String): ListItemEntity
 
     @Insert
-    fun insert(item: ListItemData)
+    suspend fun insert(item: ListItemEntity)
 
     @Delete
-    fun delete(item: ListItemData)
+    suspend fun delete(item: ListItemEntity)
 
     @Query("DELETE FROM main_list WHERE id == :id")
-    fun deleteById(id: String)
+    suspend fun deleteById(id: String)
 
     @Query("UPDATE main_list SET title = :title WHERE id == :id")
-    fun updateTitle(id: String, title: String)
+    suspend fun updateTitle(id: String, title: String)
 
     @Query("UPDATE main_list SET isDone = :isDone WHERE id == :id")
-    fun updateStatus(id: String, isDone: Boolean)
+    suspend fun updateStatus(id: String, isDone: Boolean)
 }
