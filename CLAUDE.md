@@ -38,7 +38,7 @@ Pure Kotlin with no Android dependencies.
 
 ### Data Layer (`data/`)
 
-- **`local/`** — Room database: `AppDatabase` singleton, `MainListDao`, `ListItemEntity` (@Entity for `main_list` table)
+- **`local/`** — Room database: `AppDatabase`, `MainListDao`, `ListItemEntity` (@Entity for `main_list` table). Singleton managed by Hilt's `DatabaseModule`.
 - **`repository/ListItemRepositoryImpl`** — implements `ListItemRepository`, delegates to DAO with entity↔domain mapping
 - **`mapper/ListItemMapper`** — extension functions `ListItemEntity.toDomain()` and `ListItem.toEntity()`
 - **`fake/FakeListItemRepository`** — in-memory implementation for previews/testing
@@ -54,13 +54,19 @@ Pure Kotlin with no Android dependencies.
 
 ### Dependency Injection (`di/`)
 
-Manual DI via `AppContainer` (created in `ListItApplication.onCreate()`). No Hilt/Dagger. Screens access the container via `LocalContext.current.applicationContext as ListItApplication`. ViewModels are created with inline `viewModel { }` factory lambdas.
+Uses **Hilt/Dagger** (2.56.2) with KSP compiler. `ListItApplication` is annotated `@HiltAndroidApp`, `MainActivity` with `@AndroidEntryPoint`.
+
+- **`DatabaseModule`** — `@Module` providing `AppDatabase` (`@Singleton`) and `MainListDao`
+- **`RepositoryModule`** — `@Module` binding `ListItemRepositoryImpl` → `ListItemRepository` (`@Singleton`)
+- All use cases and `ListItemRepositoryImpl` use `@Inject constructor`
+- ViewModels use `@HiltViewModel` + `@Inject constructor` and are obtained via `hiltViewModel()` in composables
+- `EditViewModel` reads nav args from `SavedStateHandle` (keys: `"id"`, `"title"`, `"isDone"`)
 
 ### Key Technical Details
 
 - **Min SDK 21 / Target SDK 35**, compiled with JDK 17
 - Compose BOM `2025.08.00`, Material3
-- Room 2.7.1 with KSP compiler
+- Room 2.7.1 with KSP compiler, Hilt 2.56.2 with KSP compiler
 - Reactive chain: Room `Flow` → DAO → RepositoryImpl (maps to domain) → UseCase → ViewModel `stateIn()` → Compose `collectAsStateWithLifecycle()`
 - Dynamic color theming on Android 12+ (`ListItTheme`)
 - Database uses destructive fallback migration
