@@ -1,25 +1,31 @@
 package com.example.mylist.data.fake
 
+import com.example.mylist.domain.model.DEFAULT_LIST_ID
 import com.example.mylist.domain.model.ListItem
 import com.example.mylist.domain.repository.ListItemRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import java.util.UUID
 
 class FakeListItemRepository : ListItemRepository {
     private val _list = MutableStateFlow(
         listOf(
-            ListItem(id = UUID.randomUUID().toString(), title = getFakeNewTitle()),
-            ListItem(id = UUID.randomUUID().toString(), title = getFakeNewTitle()),
-            ListItem(id = UUID.randomUUID().toString(), title = getFakeNewTitle()),
-            ListItem(id = UUID.randomUUID().toString(), title = getFakeNewTitle()),
-            ListItem(id = UUID.randomUUID().toString(), title = getFakeNewTitle()),
+            ListItem(id = UUID.randomUUID().toString(), title = getFakeNewTitle(), listId = DEFAULT_LIST_ID),
+            ListItem(id = UUID.randomUUID().toString(), title = getFakeNewTitle(), listId = DEFAULT_LIST_ID),
+            ListItem(id = UUID.randomUUID().toString(), title = getFakeNewTitle(), listId = DEFAULT_LIST_ID),
+            ListItem(id = UUID.randomUUID().toString(), title = getFakeNewTitle(), listId = DEFAULT_LIST_ID),
+            ListItem(id = UUID.randomUUID().toString(), title = getFakeNewTitle(), listId = DEFAULT_LIST_ID),
         )
     )
 
     override fun observeAll(): Flow<List<ListItem>> {
         return _list.asStateFlow()
+    }
+
+    override fun observeByListId(listId: String): Flow<List<ListItem>> {
+        return _list.map { items -> items.filter { it.listId == listId } }
     }
 
     override suspend fun findById(id: String): ListItem {
@@ -34,12 +40,20 @@ class FakeListItemRepository : ListItemRepository {
         _list.value = _list.value.filter { it.id != id }
     }
 
+    override suspend fun deleteByListId(listId: String) {
+        _list.value = _list.value.filter { it.listId != listId }
+    }
+
     override suspend fun updateTitle(id: String, title: String) {
         _list.value = _list.value.map { if (it.id == id) it.copy(title = title) else it }
     }
 
     override suspend fun updateStatus(id: String, isDone: Boolean) {
         _list.value = _list.value.map { if (it.id == id) it.copy(isDone = isDone) else it }
+    }
+
+    override suspend fun moveToList(id: String, listId: String) {
+        _list.value = _list.value.map { if (it.id == id) it.copy(listId = listId) else it }
     }
 
     companion object {

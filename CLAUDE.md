@@ -14,6 +14,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Run a single unit test class
 ./gradlew test --tests "com.example.mylist.ExampleUnitTest"
 
+# Run all use case tests
+./gradlew test --tests "com.example.mylist.domain.usecase.*"
+
+# Run a specific use case test
+./gradlew test --tests "com.example.mylist.domain.usecase.AddItemUseCaseTest"
+
 # Run instrumented (Android device/emulator) tests
 ./gradlew connectedAndroidTest
 
@@ -32,16 +38,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pure Kotlin with no Android dependencies.
 
-- **`model/ListItem`** — domain model (id, title, isDone)
-- **`repository/ListItemRepository`** — interface defining data operations (dependency rule: domain owns this)
-- **`usecase/`** — one class per operation (`ObserveItemsUseCase`, `AddItemUseCase`, `DeleteItemUseCase`, `UpdateItemTitleUseCase`, `UpdateItemStatusUseCase`), each with `operator fun invoke()`
+- **`model/ListItem`** — domain model (id, title, isDone, listId). `listId` defaults to `DEFAULT_LIST_ID`
+- **`model/ItemList`** — domain model for lists (id, name). Constants `DEFAULT_LIST_ID` and `DEFAULT_LIST_NAME`
+- **`repository/ListItemRepository`** — interface defining item data operations (dependency rule: domain owns this)
+- **`repository/ItemListRepository`** — interface defining list CRUD operations
+- **`usecase/`** — one class per operation, each with `operator fun invoke()`:
+  - Items: `ObserveItemsUseCase`, `ObserveItemsByListUseCase`, `AddItemUseCase`, `DeleteItemUseCase`, `UpdateItemTitleUseCase`, `UpdateItemStatusUseCase`, `MoveItemUseCase`
+  - Lists: `ObserveListsUseCase`, `AddListUseCase`, `DeleteListUseCase`
 
 ### Data Layer (`data/`)
 
-- **`local/`** — Room database: `AppDatabase`, `MainListDao`, `ListItemEntity` (@Entity for `main_list` table). Singleton managed by Hilt's `DatabaseModule`.
+- **`local/`** — Room database (v3): `AppDatabase`, `MainListDao`, `ItemListDao`, `ListItemEntity` (@Entity for `main_list` table with FK to `item_lists`), `ItemListEntity` (@Entity for `item_lists` table). Singleton managed by Hilt's `DatabaseModule`. Default list seeded via `onCreate` callback.
 - **`repository/ListItemRepositoryImpl`** — implements `ListItemRepository`, delegates to DAO with entity↔domain mapping
+- **`repository/ItemListRepositoryImpl`** — implements `ItemListRepository`
 - **`mapper/ListItemMapper`** — extension functions `ListItemEntity.toDomain()` and `ListItem.toEntity()`
+- **`mapper/ItemListMapper`** — extension functions `ItemListEntity.toDomain()` and `ItemList.toEntity()`
 - **`fake/FakeListItemRepository`** — in-memory implementation for previews/testing
+- **`fake/FakeItemListRepository`** — in-memory list implementation for previews/testing
 
 ### Presentation Layer (`presentation/`)
 
@@ -56,8 +69,8 @@ Pure Kotlin with no Android dependencies.
 
 Uses **Hilt/Dagger** (2.56.2) with KSP compiler. `ListItApplication` is annotated `@HiltAndroidApp`, `MainActivity` with `@AndroidEntryPoint`.
 
-- **`DatabaseModule`** — `@Module` providing `AppDatabase` (`@Singleton`) and `MainListDao`
-- **`RepositoryModule`** — `@Module` binding `ListItemRepositoryImpl` → `ListItemRepository` (`@Singleton`)
+- **`DatabaseModule`** — `@Module` providing `AppDatabase` (`@Singleton`), `MainListDao`, and `ItemListDao`. Seeds default list on DB creation.
+- **`RepositoryModule`** — `@Module` binding `ListItemRepositoryImpl` → `ListItemRepository` and `ItemListRepositoryImpl` → `ItemListRepository` (`@Singleton`)
 - All use cases and `ListItemRepositoryImpl` use `@Inject constructor`
 - ViewModels use `@HiltViewModel` + `@Inject constructor` and are obtained via `hiltViewModel()` in composables
 - `EditViewModel` reads nav args from `SavedStateHandle` (keys: `"id"`, `"title"`, `"isDone"`)

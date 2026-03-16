@@ -14,6 +14,9 @@ class ListItemRepositoryImpl @Inject constructor(private val dao: MainListDao) :
     override fun observeAll(): Flow<List<ListItem>> =
         dao.observeAll().map { list -> list.map { it.toDomain() } }
 
+    override fun observeByListId(listId: String): Flow<List<ListItem>> =
+        dao.observeByListId(listId).map { list -> list.map { it.toDomain() } }
+
     override suspend fun findById(id: String): ListItem =
         dao.findById(id).toDomain()
 
@@ -23,9 +26,15 @@ class ListItemRepositoryImpl @Inject constructor(private val dao: MainListDao) :
     override suspend fun deleteById(id: String) =
         dao.deleteById(id)
 
+    override suspend fun deleteByListId(listId: String) =
+        dao.deleteByListId(listId)
+
     override suspend fun updateTitle(id: String, title: String) =
         dao.updateTitle(id, title)
 
     override suspend fun updateStatus(id: String, isDone: Boolean) =
         dao.updateStatus(id, isDone)
+
+    override suspend fun moveToList(id: String, listId: String) =
+        dao.moveToList(id, listId)
 }

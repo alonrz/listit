@@ -6,6 +6,8 @@ A simple to-do list app for Android built with Jetpack Compose and Clean Archite
 
 - Create, edit, and delete tasks
 - Mark tasks as done/not done
+- Multiple lists — organize items into separate lists
+- Move items between lists
 - Dynamic color theming on Android 12+
 
 ## Tech Stack
