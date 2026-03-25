@@ -1,111 +1,95 @@
 package com.example.listit.presentation.home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.example.listit.domain.model.ListItem
-import com.example.listit.presentation.navigation.ScreenNavigation
+import com.example.listit.presentation.components.GroupCardView
+import com.example.listit.presentation.components.ListCardColor
+import com.example.listit.presentation.components.ListCardIcon
+import com.example.listit.presentation.components.ListCardStyle
 import com.example.listit.ui.theme.ListItTheme
-import com.example.listit.presentation.components.ListItemView
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainListView(
+fun HomeView(
     viewModel: HomeViewModel,
-    navController: NavController,
     modifier: Modifier = Modifier,
+    onAddItemClick: (groupId: String) -> Unit = {},
 ) {
-    val listItems by viewModel.observeItems.collectAsStateWithLifecycle()
+    val groupCards by viewModel.groupCards.collectAsStateWithLifecycle()
 
-    MainListViewInternal(
-        listItems = listItems,
+    HomeViewInternal(
+        groupCards = groupCards,
         modifier = modifier,
-        onItemClick = { id: String, title: String, isDone: Boolean ->
-            navController.navigate(
-                route = ScreenNavigation.Edit.passIdAndTitle(
-                    id = id,
-                    title = title,
-                    isDone = isDone,
-                )
-            )
-        },
-        onCheckedClick = { id: String, isDone: Boolean ->
+        onAddItemClick = onAddItemClick,
+        onViewAllClick = { /* future work */ },
+        onCheckedClick = { id, isDone ->
             viewModel.changeItemCheckStatus(id, checked = isDone.not())
         },
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun MainListViewInternal(
+private fun HomeViewInternal(
+    groupCards: List<GroupCardUiState>,
     modifier: Modifier = Modifier,
-    listItems: List<ListItem>,
-    onItemClick: (id: String, title: String, isDone: Boolean) -> Unit,
+    onAddItemClick: (groupId: String) -> Unit,
+    onViewAllClick: (groupId: String) -> Unit,
     onCheckedClick: (id: String, isDone: Boolean) -> Unit,
 ) {
-    var onlyShowDone by remember { mutableStateOf(false) }
-
     LazyColumn(modifier = modifier.fillMaxSize()) {
-        items(items = listItems.filter {
-            it.isDone == onlyShowDone
-        }) { item: ListItem ->
-            ListItemView(
-                title = item.title,
-                isDone = item.isDone,
-                onCheckedClick = {
-                    onCheckedClick(
-                        item.id,
-                        item.isDone,
-                    )
-                },
-                onItemClick = {
-                    onItemClick(
-                        item.id,
-                        item.title,
-                        item.isDone,
-                    )
-                }
+        items(items = groupCards, key = { it.groupId }) { card ->
+            GroupCardView(
+                listName = card.groupName,
+                items = card.items,
+                style = card.style,
+                onAddItemClick = { onAddItemClick(card.groupId) },
+                onViewAllClick = { onViewAllClick(card.groupId) },
+                onCheckedClick = onCheckedClick,
             )
-        }
-        item {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                TextButton(onClick = { onlyShowDone = !onlyShowDone }) {
-                    Text(text = if (onlyShowDone) "Show not completed" else "Show completed")
-                }
-            }
         }
     }
 }
 
 @Composable
 @PreviewLightDark
-fun MainListViewPreview() {
+fun HomeViewPreview() {
     ListItTheme {
-        MainListViewInternal(
-            listItems = listOf(
-                ListItem(id = "1", title = "Buy groceries", isDone = false),
-                ListItem(id = "2", title = "Walk the dog", isDone = true),
-                ListItem(id = "3", title = "Finish homework", isDone = false),
-                ListItem(id = "4", title = "Call mom", isDone = false),
-                ListItem(id = "5", title = "Read a book", isDone = true),
+        HomeViewInternal(
+            groupCards = listOf(
+                GroupCardUiState(
+                    groupId = "1",
+                    groupName = "Work",
+                    items = listOf(
+                        ListItem(id = "1", title = "Review PR", isDone = false),
+                        ListItem(id = "2", title = "Email client", isDone = true),
+                    ),
+                    style = ListCardStyle(
+                        icon = ListCardIcon.WORK,
+                        accentColor = ListCardColor.BLUE,
+                    ),
+                ),
+                GroupCardUiState(
+                    groupId = "2",
+                    groupName = "Shopping",
+                    items = listOf(
+                        ListItem(id = "3", title = "Buy groceries", isDone = false),
+                        ListItem(id = "4", title = "Pick up dry cleaning", isDone = false),
+                    ),
+                    style = ListCardStyle(
+                        icon = ListCardIcon.SHOPPING,
+                        accentColor = ListCardColor.GREEN,
+                    ),
+                ),
             ),
-            onItemClick = { _, _, _ -> },
-            onCheckedClick = { _, _ -> }
+            onAddItemClick = {},
+            onViewAllClick = {},
+            onCheckedClick = { _, _ -> },
         )
     }
 }
