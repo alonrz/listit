@@ -12,13 +12,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ./gradlew test
 
 # Run a single unit test class
-./gradlew test --tests "com.example.mylist.ExampleUnitTest"
+./gradlew test --tests "com.example.listit.ExampleUnitTest"
 
 # Run all use case tests
-./gradlew test --tests "com.example.mylist.domain.usecase.*"
+./gradlew test --tests "com.example.listit.domain.usecase.*"
 
 # Run a specific use case test
-./gradlew test --tests "com.example.mylist.domain.usecase.AddItemUseCaseTest"
+./gradlew test --tests "com.example.listit.domain.usecase.AddItemUseCaseTest"
 
 # Run instrumented (Android device/emulator) tests
 ./gradlew connectedAndroidTest
