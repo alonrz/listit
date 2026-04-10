@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.example.listit.presentation.edit.EditScreen
 import com.example.listit.presentation.root.RootScreen
 import com.example.listit.presentation.settings.SettingsScreen
+import com.example.listit.presentation.viewall.ViewAllScreen
 
 @Composable
 fun SetupNavGraph(
@@ -34,6 +35,16 @@ fun SetupNavGraph(
             )
         ) {
             EditScreen(
+                navController = navController,
+            )
+        }
+        composable(
+            route = ScreenNavigation.ViewAll.route,
+            arguments = listOf(
+                navArgument(name = VIEW_ALL_ARG_GROUP_ID) { type = NavType.StringType },
+            )
+        ) {
+            ViewAllScreen(
                 navController = navController,
             )
         }

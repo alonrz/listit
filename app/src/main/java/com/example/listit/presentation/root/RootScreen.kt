@@ -19,15 +19,24 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.listit.domain.model.ListItem
 import com.example.listit.presentation.components.AddItemBottomSheet
+import com.example.listit.presentation.components.EditItemBottomSheet
 import com.example.listit.presentation.home.HomeView
 import com.example.listit.presentation.home.HomeViewModel
 import com.example.listit.presentation.navigation.ScreenNavigation
+import com.example.listit.ui.theme.ListItTheme
 
+/**
+ * The root scaffold screen containing the top app bar, FAB for adding groups,
+ * bottom bar for group creation input, and the home view with group cards.
+ * Also manages the add-item and edit-item bottom sheet overlays.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootScreen(
@@ -35,6 +44,7 @@ fun RootScreen(
 ) {
     var promptAddNewItemUi by remember { mutableStateOf(false) }
     var addItemToGroupId by remember { mutableStateOf<String?>(null) }
+    var editingItem by remember { mutableStateOf<ListItem?>(null) }
     val viewModel: HomeViewModel = hiltViewModel()
     val groupCards by viewModel.groupCards.collectAsStateWithLifecycle()
 
@@ -83,7 +93,6 @@ fun RootScreen(
         bottomBar = {
             if (promptAddNewItemUi) {
                 BottomAppBar() {
-                    // TODO: close this prompt if back if pressed.
                     AddNewGroupUi(onAddGroup = { name ->
                         viewModel.addGroup(name)
                     }, finishedAdding = {
@@ -97,6 +106,10 @@ fun RootScreen(
             modifier = Modifier.padding(innerPaddingValues),
             viewModel = viewModel,
             onAddItemClick = { groupId -> addItemToGroupId = groupId },
+            onViewAllClick = { groupId ->
+                navController.navigate(ScreenNavigation.ViewAll.createRoute(groupId))
+            },
+            onItemClick = { item -> editingItem = item },
         )
     }
 
@@ -112,8 +125,25 @@ fun RootScreen(
             },
         )
     }
+
+    // Edit Item Bottom Sheet
+    editingItem?.let { item ->
+        EditItemBottomSheet(
+            item = item,
+            groups = groupCards,
+            onDismiss = { editingItem = null },
+            onSave = { id, title, groupId, isDone ->
+                viewModel.updateItem(id, title, groupId, isDone)
+                editingItem = null
+            },
+        )
+    }
 }
 
+/**
+ * A bottom bar input field for creating a new group. Shows a text field with a send button;
+ * pressing Done on the keyboard or tapping send creates the group and dismisses the UI.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNewGroupUi(onAddGroup: (String) -> Unit, finishedAdding: () -> Unit) {
@@ -160,6 +190,10 @@ fun AddNewGroupUi(onAddGroup: (String) -> Unit, finishedAdding: () -> Unit) {
     }
 }
 
+/**
+ * A utility composable that intercepts the system back press when enabled,
+ * invoking the provided callback instead of default back navigation.
+ */
 @Composable
 fun BackPressedHandler(
     backPressedDispatcher: OnBackPressedDispatcher? = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher,
@@ -185,5 +219,16 @@ fun BackPressedHandler(
         onDispose {
             backCallBack.remove()
         }
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun AddNewGroupUiPreview() {
+    ListItTheme {
+        AddNewGroupUi(
+            onAddGroup = {},
+            finishedAdding = {},
+        )
     }
 }
