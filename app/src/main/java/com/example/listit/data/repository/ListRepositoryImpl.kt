@@ -25,4 +25,7 @@ class ListRepositoryImpl @Inject constructor(private val dao: ItemListDao) : Lis
 
     override suspend fun updateName(id: String, name: String) =
         dao.updateName(id, name)
+
+    override suspend fun getUsedColorIndices(): List<Int> =
+        dao.getAllColorIndices()
 }

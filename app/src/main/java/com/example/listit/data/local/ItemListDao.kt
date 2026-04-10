@@ -22,4 +22,7 @@ interface ItemListDao {
 
     @Query("UPDATE item_lists SET name = :name WHERE id = :id")
     suspend fun updateName(id: String, name: String)
+
+    @Query("SELECT colorIndex FROM item_lists")
+    suspend fun getAllColorIndices(): List<Int>
 }

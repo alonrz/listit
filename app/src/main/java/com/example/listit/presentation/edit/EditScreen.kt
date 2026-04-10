@@ -17,6 +17,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.listit.presentation.navigation.ScreenNavigation
 
+/**
+ * A full-screen item detail/edit view with a text field for editing the title,
+ * a display of the current title, a delete button with confirmation dialog,
+ * and done/not-done status indicator.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditScreen(

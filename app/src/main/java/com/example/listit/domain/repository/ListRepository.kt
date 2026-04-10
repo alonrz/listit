@@ -9,4 +9,5 @@ interface ListRepository {
     suspend fun insert(list: GroupOfItems)
     suspend fun deleteById(id: String)
     suspend fun updateName(id: String, name: String)
+    suspend fun getUsedColorIndices(): List<Int>
 }

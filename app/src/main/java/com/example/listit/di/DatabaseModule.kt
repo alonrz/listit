@@ -32,7 +32,7 @@ object DatabaseModule {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
                     db.execSQL(
-                        "INSERT OR IGNORE INTO item_lists (id, name) VALUES ('$DEFAULT_LIST_ID', '$DEFAULT_LIST_NAME')"
+                        "INSERT OR IGNORE INTO item_lists (id, name, colorIndex) VALUES ('$DEFAULT_LIST_ID', '$DEFAULT_LIST_NAME', 0)"
                     )
                 }
             })

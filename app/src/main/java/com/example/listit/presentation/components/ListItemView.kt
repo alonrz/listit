@@ -16,8 +16,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.example.listit.ui.theme.ListItTheme
 
+/**
+ * An outlined card displaying a single list item with a checkbox and title.
+ * The card border turns gray and text gets strikethrough when the item is done.
+ */
 @Composable
 fun ListItemView(
     title: String,
@@ -49,6 +56,27 @@ fun ListItemView(
                 style = TextStyle(
                     textDecoration = if (isDone) TextDecoration.LineThrough else TextDecoration.None
                 ),
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun ListItemViewPreview() {
+    ListItTheme {
+        Column {
+            ListItemView(
+                title = "Buy groceries",
+                isDone = false,
+                onCheckedClick = {},
+                onItemClick = {},
+            )
+            ListItemView(
+                title = "Send email",
+                isDone = true,
+                onCheckedClick = {},
+                onItemClick = {},
             )
         }
     }
