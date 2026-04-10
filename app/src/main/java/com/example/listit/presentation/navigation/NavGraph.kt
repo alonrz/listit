@@ -52,7 +52,7 @@ fun SetupNavGraph(
             route = ScreenNavigation.Settings.route
         ) {
             SettingsScreen(
-
+                navController = navController,
             )
         }
     }
