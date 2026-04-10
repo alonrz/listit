@@ -38,6 +38,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packagingOptions {
         resources {
@@ -78,6 +79,9 @@ dependencies {
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
+
+    // DataStore
+    implementation "androidx.datastore:datastore-preferences:1.1.4"
 
     // Hilt
     implementation "com.google.dagger:hilt-android:2.56.2"

@@ -7,6 +7,7 @@ import com.example.listit.domain.usecase.AddListUseCase
 import com.example.listit.domain.usecase.DeleteItemUseCase
 import com.example.listit.domain.usecase.ObserveGroupsUseCase
 import com.example.listit.domain.usecase.ObserveItemsUseCase
+import com.example.listit.domain.usecase.ObserveSettingsUseCase
 import com.example.listit.domain.usecase.MoveItemUseCase
 import com.example.listit.domain.usecase.UpdateItemStatusUseCase
 import com.example.listit.domain.usecase.UpdateItemTitleUseCase
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     observeItemsUseCase: ObserveItemsUseCase,
     observeGroupsUseCase: ObserveGroupsUseCase,
+    observeSettingsUseCase: ObserveSettingsUseCase,
     private val addItemUseCase: AddItemUseCase,
     private val addListUseCase: AddListUseCase,
     private val deleteItemUseCase: DeleteItemUseCase,
@@ -37,8 +39,10 @@ class HomeViewModel @Inject constructor(
     val groupCards: StateFlow<List<GroupCardUiState>> = combine(
         observeGroupsUseCase(),
         observeItemsUseCase(),
-    ) { groups, items ->
-        val itemsByListId = items.groupBy { it.listId }
+        observeSettingsUseCase(),
+    ) { groups, items, settings ->
+        val visibleItems = if (settings.showCompletedItems) items else items.filterNot { it.isDone }
+        val itemsByListId = visibleItems.groupBy { it.listId }
         val icons = ListCardIcon.entries
         val colors = ListCardColor.entries
 
