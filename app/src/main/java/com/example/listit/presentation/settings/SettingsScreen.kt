@@ -7,9 +7,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.listit.ui.theme.ListItTheme
 
+/**
+ * Placeholder settings screen with static text content.
+ * Will house app-level configuration options in the future.
+ */
 @Composable
 fun SettingsScreen() {
     Column {
@@ -25,5 +31,13 @@ fun SettingsScreen() {
                 .height(1.dp)
                 .fillMaxWidth()
         )
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun SettingsScreenPreview() {
+    ListItTheme {
+        SettingsScreen()
     }
 }
