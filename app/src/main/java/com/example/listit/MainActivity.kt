@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.listit.presentation.navigation.SetupNavGraph
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import com.example.listit.ui.theme.ListItTheme
 
 @AndroidEntryPoint
@@ -19,10 +21,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ListItTheme {
-                navController = rememberNavController()
-                SetupNavGraph(
-                    navController = navController,
-                )
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    navController = rememberNavController()
+                    SetupNavGraph(
+                        navController = navController,
+                    )
+                }
             }
         }
     }
