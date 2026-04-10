@@ -7,7 +7,9 @@ import com.example.listit.domain.usecase.AddListUseCase
 import com.example.listit.domain.usecase.DeleteItemUseCase
 import com.example.listit.domain.usecase.ObserveGroupsUseCase
 import com.example.listit.domain.usecase.ObserveItemsUseCase
+import com.example.listit.domain.usecase.MoveItemUseCase
 import com.example.listit.domain.usecase.UpdateItemStatusUseCase
+import com.example.listit.domain.usecase.UpdateItemTitleUseCase
 import com.example.listit.presentation.components.ListCardColor
 import com.example.listit.presentation.components.ListCardIcon
 import com.example.listit.presentation.components.ListCardStyle
@@ -28,6 +30,8 @@ class HomeViewModel @Inject constructor(
     private val addListUseCase: AddListUseCase,
     private val deleteItemUseCase: DeleteItemUseCase,
     private val updateItemStatusUseCase: UpdateItemStatusUseCase,
+    private val updateItemTitleUseCase: UpdateItemTitleUseCase,
+    private val moveItemUseCase: MoveItemUseCase,
 ) : ViewModel() {
 
     val groupCards: StateFlow<List<GroupCardUiState>> = combine(
@@ -39,14 +43,15 @@ class HomeViewModel @Inject constructor(
         val colors = ListCardColor.entries
 
         groups.sortedBy { it.id }
-            .mapIndexed { index, group ->
+            .map { group ->
                 GroupCardUiState(
                     groupId = group.id,
                     groupName = group.name,
-                    items = itemsByListId[group.id].orEmpty(),
+                    items = itemsByListId[group.id].orEmpty()
+                        .sortedBy { it.isDone },
                     style = ListCardStyle(
-                        icon = icons[index % icons.size],
-                        accentColor = colors[index % colors.size],
+                        icon = icons[group.colorIndex % icons.size],
+                        accentColor = colors[group.colorIndex % colors.size],
                     ),
                 )
             }
@@ -77,6 +82,14 @@ class HomeViewModel @Inject constructor(
     fun changeItemCheckStatus(id: String, checked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             updateItemStatusUseCase(id = id, isDone = checked)
+        }
+    }
+
+    fun updateItem(id: String, title: String, groupId: String, isDone: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateItemTitleUseCase(id = id, title = title)
+            updateItemStatusUseCase(id = id, isDone = isDone)
+            moveItemUseCase(id = id, targetListId = groupId)
         }
     }
 }

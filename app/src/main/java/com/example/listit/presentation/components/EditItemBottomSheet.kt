@@ -14,6 +14,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -28,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -37,21 +40,22 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.listit.domain.model.ListItem
 import com.example.listit.presentation.home.GroupCardUiState
 import com.example.listit.ui.theme.ListItTheme
 
 /**
- * A modal bottom sheet for creating a new task. Contains a text field for the task title,
- * horizontally scrollable group chips for selecting which list to add to, and a save button.
- * Pressing the keyboard Done action also triggers save.
+ * A modal bottom sheet for editing an existing task. Pre-populated with the item's current title,
+ * completion status checkbox, and group selector chips. Allows changing the title, toggling
+ * done/not-done, and moving the item to a different group.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddItemBottomSheet(
+fun EditItemBottomSheet(
+    item: ListItem,
     groups: List<GroupCardUiState>,
-    initialGroupId: String,
     onDismiss: () -> Unit,
-    onSave: (title: String, groupId: String) -> Unit,
+    onSave: (id: String, title: String, groupId: String, isDone: Boolean) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -61,9 +65,9 @@ fun AddItemBottomSheet(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
     ) {
-        AddItemSheetContent(
+        EditItemSheetContent(
+            item = item,
             groups = groups,
-            initialGroupId = initialGroupId,
             onSave = onSave,
             requestFocus = true,
         )
@@ -71,18 +75,19 @@ fun AddItemBottomSheet(
 }
 
 /**
- * The inner content of the add-item sheet: title input, group selector chips,
- * and a save button. Extracted for preview support.
+ * The inner content of the edit-item sheet: pre-filled title input, done checkbox,
+ * group selector chips, and a save button. Extracted for preview support.
  */
 @Composable
-internal fun AddItemSheetContent(
+internal fun EditItemSheetContent(
+    item: ListItem,
     groups: List<GroupCardUiState>,
-    initialGroupId: String,
-    onSave: (title: String, groupId: String) -> Unit,
+    onSave: (id: String, title: String, groupId: String, isDone: Boolean) -> Unit,
     requestFocus: Boolean = false,
 ) {
-    var taskTitle by remember { mutableStateOf("") }
-    var selectedGroupId by remember { mutableStateOf(initialGroupId) }
+    var taskTitle by remember { mutableStateOf(item.title) }
+    var selectedGroupId by remember { mutableStateOf(item.listId) }
+    var isDone by remember { mutableStateOf(item.isDone) }
     val focusRequester = remember { FocusRequester() }
 
     if (requestFocus) {
@@ -99,7 +104,7 @@ internal fun AddItemSheetContent(
     ) {
         // Title
         Text(
-            text = "New Task",
+            text = "Edit Task",
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
             ),
@@ -108,22 +113,13 @@ internal fun AddItemSheetContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Subtitle
-        Text(
-            text = "What's on your mind?",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
         // Text field
         OutlinedTextField(
             value = taskTitle,
             onValueChange = { taskTitle = it },
             placeholder = {
                 Text(
-                    text = "I want to...",
+                    text = "Task name...",
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                 )
             },
@@ -139,12 +135,33 @@ internal fun AddItemSheetContent(
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
                 if (taskTitle.isNotBlank()) {
-                    onSave(taskTitle.trim(), selectedGroupId)
+                    onSave(item.id, taskTitle.trim(), selectedGroupId, isDone)
                 }
             }),
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Done status checkbox
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(
+                checked = isDone,
+                onCheckedChange = { isDone = it },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = ListCardColor.BLUE.color,
+                ),
+            )
+            Text(
+                text = if (isDone) "Completed" else "Not completed",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Select list label
         Text(
@@ -182,7 +199,7 @@ internal fun AddItemSheetContent(
         Button(
             onClick = {
                 if (taskTitle.isNotBlank()) {
-                    onSave(taskTitle.trim(), selectedGroupId)
+                    onSave(item.id, taskTitle.trim(), selectedGroupId, isDone)
                 }
             },
             modifier = Modifier
@@ -195,7 +212,7 @@ internal fun AddItemSheetContent(
             enabled = taskTitle.isNotBlank(),
         ) {
             Text(
-                text = "Save Task",
+                text = "Save Changes",
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
@@ -222,13 +239,13 @@ private val previewGroups = listOf(
 
 @Composable
 @PreviewLightDark
-private fun AddItemSheetContentPreview() {
+private fun EditItemSheetContentPreview() {
     ListItTheme {
         Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
-            AddItemSheetContent(
+            EditItemSheetContent(
+                item = ListItem(id = "1", title = "Buy groceries", isDone = false, listId = "2"),
                 groups = previewGroups,
-                initialGroupId = "1",
-                onSave = { _, _ -> },
+                onSave = { _, _, _, _ -> },
             )
         }
     }

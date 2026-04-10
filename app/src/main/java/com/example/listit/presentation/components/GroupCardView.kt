@@ -30,7 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,6 +41,11 @@ import com.example.listit.ui.theme.ListItTheme
 
 private const val MAX_PREVIEW_ITEMS = 3
 
+/**
+ * A card displaying a group's header (icon, name, add button) with a colored accent bar,
+ * a preview of up to 3 task items, and a "View all tasks" footer link.
+ * Shows a centered "Nothing here yet" message when the group has no items.
+ */
 @Composable
 fun GroupCardView(
     listName: String,
@@ -47,6 +54,7 @@ fun GroupCardView(
     onAddItemClick: () -> Unit,
     onViewAllClick: () -> Unit,
     onCheckedClick: (id: String, isDone: Boolean) -> Unit,
+    onItemClick: (ListItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val accentColor = style.accentColor.color
@@ -114,28 +122,28 @@ fun GroupCardView(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Item list (limited preview)
-                val previewItems = items.take(MAX_PREVIEW_ITEMS)
-                previewItems.forEach { item ->
-                    Row(
+                if (items.isEmpty()) {
+                    // Empty state
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                            .padding(vertical = 24.dp),
+                        contentAlignment = Alignment.Center,
                     ) {
-                        Checkbox(
-                            checked = item.isDone,
-                            onCheckedChange = { onCheckedClick(item.id, item.isDone) },
-                            colors = CheckboxDefaults.colors(
-                                uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            ),
-                        )
                         Text(
-                            text = item.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                            text = "Nothing here yet",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        )
+                    }
+                } else {
+                    // Item list (limited preview)
+                    val previewItems = items.take(MAX_PREVIEW_ITEMS)
+                    previewItems.forEach { item ->
+                        TaskItemRow(
+                            item = item,
+                            onCheckedClick = onCheckedClick,
+                            onItemClick = onItemClick,
                         )
                     }
                 }
@@ -167,6 +175,47 @@ fun GroupCardView(
     }
 }
 
+/**
+ * A single task row with a checkbox and title. Checked items display with
+ * strikethrough text and dimmed color. Tapping the row opens the edit sheet.
+ */
+@Composable
+fun TaskItemRow(
+    item: ListItem,
+    onCheckedClick: (id: String, isDone: Boolean) -> Unit,
+    onItemClick: (ListItem) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onItemClick(item) }
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(
+            checked = item.isDone,
+            onCheckedChange = { onCheckedClick(item.id, item.isDone) },
+            colors = CheckboxDefaults.colors(
+                uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
+        )
+        Text(
+            text = item.title,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                textDecoration = if (item.isDone) TextDecoration.LineThrough else TextDecoration.None,
+            ),
+            color = if (item.isDone) {
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
 @Composable
 @PreviewLightDark
 private fun GroupCardViewPreview() {
@@ -176,7 +225,7 @@ private fun GroupCardViewPreview() {
             items = listOf(
                 ListItem(id = "1", title = "Review PR for dashboard", isDone = false),
                 ListItem(id = "2", title = "Email Client about specs", isDone = false),
-                ListItem(id = "3", title = "Sync Meeting @ 2PM", isDone = false),
+                ListItem(id = "3", title = "Sync Meeting @ 2PM", isDone = true),
                 ListItem(id = "4", title = "Hidden fourth item", isDone = false),
             ),
             style = ListCardStyle(
@@ -186,6 +235,26 @@ private fun GroupCardViewPreview() {
             onAddItemClick = {},
             onViewAllClick = {},
             onCheckedClick = { _, _ -> },
+            onItemClick = {},
         )
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun TaskItemRowPreview() {
+    ListItTheme {
+        Column {
+            TaskItemRow(
+                item = ListItem(id = "1", title = "Unchecked task", isDone = false),
+                onCheckedClick = { _, _ -> },
+                onItemClick = {},
+            )
+            TaskItemRow(
+                item = ListItem(id = "2", title = "Completed task", isDone = true),
+                onCheckedClick = { _, _ -> },
+                onItemClick = {},
+            )
+        }
     }
 }

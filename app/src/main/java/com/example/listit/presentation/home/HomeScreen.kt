@@ -15,11 +15,17 @@ import com.example.listit.presentation.components.ListCardIcon
 import com.example.listit.presentation.components.ListCardStyle
 import com.example.listit.ui.theme.ListItTheme
 
+/**
+ * The main home screen displaying a vertically scrollable list of group cards.
+ * Each card shows a preview of its tasks and links to the full group view.
+ */
 @Composable
 fun HomeView(
     viewModel: HomeViewModel,
     modifier: Modifier = Modifier,
     onAddItemClick: (groupId: String) -> Unit = {},
+    onViewAllClick: (groupId: String) -> Unit = {},
+    onItemClick: (ListItem) -> Unit = {},
 ) {
     val groupCards by viewModel.groupCards.collectAsStateWithLifecycle()
 
@@ -27,10 +33,11 @@ fun HomeView(
         groupCards = groupCards,
         modifier = modifier,
         onAddItemClick = onAddItemClick,
-        onViewAllClick = { /* future work */ },
+        onViewAllClick = onViewAllClick,
         onCheckedClick = { id, isDone ->
             viewModel.changeItemCheckStatus(id, checked = isDone.not())
         },
+        onItemClick = onItemClick,
     )
 }
 
@@ -41,6 +48,7 @@ private fun HomeViewInternal(
     onAddItemClick: (groupId: String) -> Unit,
     onViewAllClick: (groupId: String) -> Unit,
     onCheckedClick: (id: String, isDone: Boolean) -> Unit,
+    onItemClick: (ListItem) -> Unit,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
         items(items = groupCards, key = { it.groupId }) { card ->
@@ -51,6 +59,7 @@ private fun HomeViewInternal(
                 onAddItemClick = { onAddItemClick(card.groupId) },
                 onViewAllClick = { onViewAllClick(card.groupId) },
                 onCheckedClick = onCheckedClick,
+                onItemClick = onItemClick,
             )
         }
     }
@@ -90,6 +99,7 @@ fun HomeViewPreview() {
             onAddItemClick = {},
             onViewAllClick = {},
             onCheckedClick = { _, _ -> },
+            onItemClick = {},
         )
     }
 }
