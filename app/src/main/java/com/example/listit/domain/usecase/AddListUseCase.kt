@@ -7,6 +7,14 @@ import javax.inject.Inject
 
 class AddListUseCase @Inject constructor(private val repository: ListRepository) {
     suspend operator fun invoke(name: String) {
-        repository.insert(GroupOfItems(id = UUID.randomUUID().toString(), name = name))
+        val usedIndices = repository.getUsedColorIndices().toSet()
+        val colorIndex = (0..7).firstOrNull { it !in usedIndices } ?: (usedIndices.size % 8)
+        repository.insert(
+            GroupOfItems(
+                id = UUID.randomUUID().toString(),
+                name = name,
+                colorIndex = colorIndex,
+            )
+        )
     }
 }

@@ -8,4 +8,5 @@ import androidx.room.PrimaryKey
 data class ItemListEntity(
     @PrimaryKey val id: String,
     @ColumnInfo val name: String,
+    @ColumnInfo val colorIndex: Int = 0,
 )

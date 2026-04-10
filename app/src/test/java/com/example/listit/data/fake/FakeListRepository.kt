@@ -29,4 +29,7 @@ class FakeListRepository : ListRepository {
     override suspend fun updateName(id: String, name: String) {
         _lists.value = _lists.value.map { if (it.id == id) it.copy(name = name) else it }
     }
+
+    override suspend fun getUsedColorIndices(): List<Int> =
+        _lists.value.map { it.colorIndex }
 }
